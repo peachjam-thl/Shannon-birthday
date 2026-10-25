@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#fff9ed">
+  <meta name="description" content="送给马笑楠 Shannon Ma 的生日小花园。摇一摇签筒，收下十二份暖暖的生日祝福。">
+  <title>笑楠，生日快乐呀！· Shannon's Birthday Garden</title>
+  <link rel="icon" type="image/svg+xml" href="assets/flower.svg">
+  <link rel="preload" href="assets/handwriting.woff" as="font" type="font/woff" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <svg class="svg-library" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><defs>
+    <symbol id="flower" viewBox="0 0 80 80"><g fill="currentColor" stroke="currentColor" stroke-width="2"><ellipse cx="40" cy="22" rx="11" ry="17"/><ellipse cx="40" cy="58" rx="11" ry="17"/><ellipse cx="22" cy="40" rx="17" ry="11"/><ellipse cx="58" cy="40" rx="17" ry="11"/></g><circle cx="40" cy="40" r="11" fill="#ebbd55"/><path d="M35 40h1m8 0h1m-8 5q3 3 6 0" stroke="#695446" stroke-width="2" stroke-linecap="round" fill="none"/></symbol>
+    <symbol id="spark" viewBox="0 0 40 40"><path d="M20 3Q18 18 3 20q15 2 17 17 2-15 17-17Q22 18 20 3Z" fill="currentColor"/></symbol>
+    <symbol id="heart" viewBox="0 0 60 60"><path d="M30 49C22 43 7 32 8 21c1-13 18-15 23-2C38 7 54 12 52 25c-2 11-14 21-22 24Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></symbol>
+    <symbol id="sun" viewBox="0 0 100 100"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M50 3v10m23-4-5 9M91 27l-9 5M97 50H87M91 73l-9-5M73 91l-5-9M50 97V87M27 91l5-9M9 73l9-5M3 50h10M9 27l9 5M27 9l5 9"/><circle cx="50" cy="50" r="27" fill="#f0c961"/><path d="M40 46v2m19-2v2m-17 8q9 10 18-1" stroke="#836c46"/></g></symbol>
+  </defs></svg>
+  <header class="site-header wrap">
+    <a class="brand" href="#home"><svg aria-hidden="true"><use href="#flower"/></svg><span>笑楠的生日花园<small>SHANNON'S LITTLE GARDEN</small></span></a>
+    <nav aria-label="页面导航"><a href="#wishes">去抽个签</a><a href="#collection">我的祝福<span id="nav-count">0</span></a><button id="sound-toggle" class="sound-button" type="button" aria-label="开启声音" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10h4l5-4v12l-5-4H4zm12-2q5 4 0 8M18 5q8 7 0 14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path class="sound-slash" d="m3 3 18 18" stroke="currentColor" stroke-width="1.7"/></svg></button></nav>
+  </header>
+  <main>
+    <section id="home" class="hero wrap" aria-labelledby="birthday-title">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="tiny-star">✳</span> A LITTLE GARDEN, ALL FOR YOU</p>
+        <h1 id="birthday-title"><span>笑楠，</span><br>生日快乐呀<span class="title-exclamation">！</span></h1>
+        <p class="english-name">To <span>Shannon Ma</span>, with a whole lot of sunshine.</p>
+        <p class="hero-description">把阳光、鲜花和小小的好运，<br>都装进这座只属于你的生日花园。</p>
+        <a class="button button-blue hero-button" href="#wishes">去抽一支生日签 <span aria-hidden="true">↗</span></a>
+        <p class="hand-note"><svg aria-hidden="true"><use href="#heart"/></svg>今天所有的好运，都偏向你。</p>
+      </div>
+      <div class="hero-art" aria-label="花园里放着笑楠的手绘生日肖像">
+        <img class="garden-illustration" src="assets/birthday-garden.png" alt="蜡笔画的小屋、太阳和开满鲜花的花园" width="1536" height="1024">
+        <div class="portrait-paper"><span class="paper-tape" aria-hidden="true"></span><img src="assets/shannon-portrait.png" alt="马笑楠 Shannon Ma 的手绘肖像，保留原图中的五官、短发和托腮神态" width="1254" height="1254"><span class="portrait-caption">今天的主角，是你呀 ♡</span></div>
+        <span class="art-note">a little sunshine<br>for your new year.</span>
+        <svg class="art-heart" aria-hidden="true"><use href="#heart"/></svg>
+      </div>
+    </section>
+    <div class="garden-divider wrap" aria-hidden="true"><span>✳</span><span>把平凡的日子，过成喜欢的样子</span><span>✳</span></div>
+    <section id="wishes" class="wish-section wrap" aria-labelledby="wish-heading">
+      <div class="section-top"><div><p class="eyebrow">01 / A POCKETFUL OF GOOD WISHES</p><h2 id="wish-heading">摇一摇，好事要发生啦<span class="inline-flower">✿</span></h2></div><p class="section-aside">这里的每一支，都是上上签。</p></div>
+      <div class="draw-layout">
+        <div class="wish-intro"><span class="scribble-label">给新一岁的你</span><h3>愿望不用很大，<br>开心就很好。</h3><p>十二支小小的生日签，<br>藏着十二种大大的祝愿。<br>慢慢抽，好运会一一来到。</p><svg class="intro-sun" aria-hidden="true"><use href="#sun"/></svg></div>
+        <div class="draw-station">
+          <span class="jar-spark spark-left" aria-hidden="true">✧</span><span class="jar-spark spark-right" aria-hidden="true">✦</span>
+          <button id="jar-button" class="jar-button" type="button" aria-label="摇一摇签筒，抽一支生日祝福"><svg id="fortune-jar" viewBox="0 0 280 300" role="img" aria-label="装满生日签的蓝色手绘签筒"><defs><pattern id="jar-dots" width="22" height="22" patternUnits="userSpaceOnUse"><path d="m3 5 4 3m9 6 2 5" stroke="#e9f0df" stroke-width="2.5" stroke-linecap="round" opacity=".4"/></pattern></defs><ellipse cx="142" cy="280" rx="83" ry="9" fill="#e8d7af" opacity=".45"/><g class="sticks" fill="#e8c58c" stroke="#ad8054" stroke-width="2.6" stroke-linejoin="round"><path d="m74 155-20-98 17-3 26 107Z"/><path d="m96 151-6-122 18-1 7 127Z"/><path d="m120 153 5-139 19 2-5 139Z"/><path d="m148 153 22-130 18 4-22 133Z"/><path d="m172 158 32-108 16 6-28 111Z"/><path d="m96 57 10-1m22-11 12 1m33 7 12 2M64 79l12-2m128 18 10 4" stroke="#cf7658" stroke-width="6"/></g><ellipse cx="140" cy="136" rx="85" ry="24" fill="#3e6687" stroke="#416a8a" stroke-width="3"/><path d="M55 135 64 255q77 36 151-2l9-118q-78 39-169 0Z" fill="#759bae" stroke="#446e8d" stroke-width="4"/><path d="M55 135 64 255q77 36 151-2l9-118q-78 39-169 0Z" fill="url(#jar-dots)"/><path d="M63 154q76 31 151-1M67 247q72 26 144-1" fill="none" stroke="#d5dfc7" stroke-width="3"/><path d="m107 170 65 3-1 65-64-4Z" fill="#f8eac8" stroke="#e0cca3" stroke-width="2"/><text x="139" y="220" text-anchor="middle" fill="#ba6955" font-size="43" font-family="BirthdayHand,KaiTi,serif">福</text><path d="M72 166 77 233M204 170l-3 67" stroke="#91b0bc" stroke-width="3" stroke-linecap="round"/></svg></button>
+          <p class="jar-caption" id="draw-status" role="status" aria-live="polite">闭上眼，在心里许个愿吧。</p>
+          <button id="draw-button" class="button button-blue draw-button" type="button">摇一摇，收一份祝福 <span aria-hidden="true">✧</span></button>
+          <p class="draw-progress">已收集 <strong id="draw-count">0</strong> / 12 份祝福</p>
+        </div>
+        <div class="wish-how"><div class="how-paper"><span class="paper-tape" aria-hidden="true"></span><p class="how-heading">收下好运的方法</p><ol><li><span>01</span>心里许一个小愿望</li><li><span>02</span>轻轻摇一摇签筒</li><li><span>03</span>把祝福装进口袋</li></ol><p>别着急，<br>属于你的美好都在路上。</p><svg aria-hidden="true"><use href="#heart"/></svg></div></div>
+      </div>
+    </section>
+    <section id="collection" class="collection-section wrap" aria-labelledby="collection-heading"><div class="section-top"><div><p class="eyebrow">02 / LITTLE THINGS TO KEEP</p><h2 id="collection-heading">你的好运收藏夹</h2></div><p class="section-aside" id="collection-summary">还有 12 份美好，等你慢慢遇见。</p></div><div id="wish-collection" class="wish-collection"></div><p class="collection-note">点开已收集的签，可以再读一遍。喜欢的祝福，值得反复看。</p></section>
+    <section id="letter" class="letter-section wrap" aria-labelledby="letter-heading"><div class="envelope-illustration" aria-hidden="true"><span class="envelope-flap"></span><span class="envelope-heart">♥</span></div><div><p class="eyebrow">ONE MORE LITTLE SURPRISE</p><h2 id="letter-heading">还有一封信，想慢慢读给你听。</h2><p id="letter-hint">集齐十二支生日签，就能拆开这份小小的心意。</p><button id="letter-button" class="button button-letter" type="button" disabled><span aria-hidden="true">♡</span> <span id="letter-button-text">等待花园里的 12 份祝福</span></button></div></section>
+    <footer class="site-footer wrap"><svg aria-hidden="true"><use href="#flower"/></svg><p>愿你眼里有光，心里有花。<span>Happy birthday, Shannon. Stay wonderfully you.</span></p><span class="footer-heart" aria-hidden="true">♡</span></footer>
+  </main>
+  <dialog id="wish-dialog" class="wish-dialog" aria-labelledby="card-title"><button class="dialog-close" type="button" aria-label="关闭祝福卡">×</button><div id="wish-card" class="wish-card"><p class="card-eyebrow">A LITTLE WISH FOR SHANNON</p><p id="card-number" class="card-number"></p><div id="card-icon" class="card-icon" aria-hidden="true"></div><p class="card-grade">生 日 · 上 上 签</p><h2 id="card-title"></h2><p id="card-wish" class="card-wish"></p><div class="card-line" aria-hidden="true"></div><p id="card-body" class="card-body"></p><p class="card-signature">给笑楠，新一岁也要开心呀 ♡</p></div><div class="dialog-actions"><button id="save-card" class="button button-outline" type="button">存下这份祝福 ↓</button><button id="next-wish" class="button button-blue" type="button">再抽一支 ↗</button></div><p id="save-status" class="save-status" role="status"></p></dialog>
+  <dialog id="letter-dialog" class="letter-dialog" aria-labelledby="letter-title"><button class="dialog-close" type="button" aria-label="收起生日信">×</button><article class="birthday-letter"><p class="eyebrow">A LETTER, JUST FOR YOU</p><h2 id="letter-title">亲爱的笑楠：</h2><p>生日快乐呀！</p><p>这座小小的花园，装着一些简单又认真的愿望。愿你新的一岁，有明亮的晴天，也有安心躲雨的屋檐；有勇敢向前的底气，也有停下来休息的自由。</p><p>愿你喜欢的事，慢慢有回音。愿你努力的日子，有收获，也有好好吃饭、好好睡觉的小幸福。</p><p>不必每一天都很厉害，不必总是照顾所有人的期待。累了就歇一歇，开心的时候就大声笑。你可以按自己的节奏，去过喜欢的生活。</p><p>十二份祝福抽完了，但对你的祝愿没有结束。往后的每一天，也愿你被温柔以待，遇见可爱的人和事。</p><p class="letter-last">祝马笑楠 Shannon Ma：<br><strong>自由，明亮，常常快乐。</strong></p><p class="letter-sign">来自一个希望你天天开心的人 ♡</p></article><button class="button button-blue close-letter" type="button">把心意好好收下 ♡</button></dialog>
+  <div id="confetti" class="confetti" aria-hidden="true"></div>
+  <noscript><p class="noscript-note">开启浏览器 JavaScript，即可摇签并收集生日祝福。</p></noscript>
+</body>
+</html>
