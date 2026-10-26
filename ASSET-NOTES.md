@@ -1,5 +1,12 @@
 # 第二版像素素材
 
+## 用户提供的生日歌
+
+- 原文件：`D:/GOOGLEDownload/the_mountain-happy-birthday-576570.mp3`。
+- 网站文件：`dist/assets/happy-birthday.mp3`，原样复制，不裁剪或转码。
+- 两份文件 SHA-256 相同：`5327e9bfcae642870770fad109b83db8bf89f93f5be596f680dcdd807179b5f5`。大小 3,955,968 字节；浏览器解码时长 123.624 秒。
+- 左侧 ♪ 控制单一页面级 audio 元素，替代此前的合成提示音；不随屏幕翻页重建。无自动播放，使用 `preload="none"`，默认音量 65%。
+
 ## 中美祝福地图
 
 - `dist/assets/china-pixel-map.svg` 由项目脚本 `build-map.py` 绘制，使用保留在 `china-boundaries.geojson` 的阿里云 DataV.GeoAtlas 全国省级边界数据：[地图工具](https://datav.aliyun.com/portal/school/atlas/area_selector)、[原始 GeoJSON](https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json)。
@@ -28,7 +35,7 @@
 - `dist/assets/pixel-meadow.png`：使用内置 image_gen 创建的原创像素乡野背景。
 - 木框、宝箱、卡背、像素心形和游戏机外壳为项目内 HTML/CSS/SVG。
 - 英文字体 Press Start 2P，来自 Google Fonts；中文字体 Fusion Pixel 12px proportional zh_hans，来自 TakWolf/fusion-pixel-font 2026.10.25 发布包。许可及依赖字体许可随 `dist/assets/` 保存。
-- 未使用游戏原版素材或原版配乐；提示音是代码生成的原创简单音阶。
+- 未使用游戏原版素材或原版配乐；当前生日歌使用用户提供的 MP3，来源见上方记录。
 
 ## 肖像透明底最终提示词
 

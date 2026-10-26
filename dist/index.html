@@ -7,12 +7,12 @@
   <meta name="description" content="Shannon 的专属像素生日掌机。解锁生日冒险，收集五张签卡，打开最后一封信。">
   <title>Happy BIRTHDAY SHANNON!!! · 生日掌机</title>
   <link rel="icon" href="assets/pixel-heart.svg" type="image/svg+xml">
-  <link rel="preload" href="assets/pixel-cjk.woff?v=bay-round-1" as="font" type="font/woff" crossorigin>
+  <link rel="preload" href="assets/pixel-cjk.woff?v=birthday-music-1" as="font" type="font/woff" crossorigin>
   <link rel="preload" href="assets/pixel-latin.ttf" as="font" type="font/ttf" crossorigin>
   <link rel="preload" href="assets/pixel-starfield.png" as="image" fetchpriority="low">
-  <link rel="stylesheet" href="styles.css?v=bay-round-1">
+  <link rel="stylesheet" href="styles.css?v=birthday-music-1">
   <script src="content.js" defer></script>
-  <script src="app.js?v=bay-round-1" defer></script>
+  <script src="app.js?v=birthday-music-1" defer></script>
 </head>
 <body>
   <svg class="sprite-library" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><defs>
@@ -30,7 +30,7 @@
           <button class="minus hardware" id="back-minus" type="button" aria-label="返回上一页"><span></span></button>
           <div class="analog analog-left" aria-hidden="true"><span></span></div>
           <div class="dpad" aria-label="方向键翻页"><button class="dpad-up hardware" data-direction="up" type="button" aria-label="向上，上一页">▲</button><button class="dpad-left hardware" data-direction="left" type="button" aria-label="向左，上一页">◀</button><button class="dpad-right hardware" data-direction="right" type="button" aria-label="向右，下一页">▶</button><button class="dpad-down hardware" data-direction="down" type="button" aria-label="向下，下一页">▼</button></div>
-          <button class="capture hardware" id="sound-toggle" type="button" aria-label="开启游戏音效" aria-pressed="false"><span class="sound-icon" aria-hidden="true">♪</span></button>
+          <button class="capture hardware" id="sound-toggle" type="button" aria-label="播放生日歌" title="播放生日歌" aria-pressed="false"><span class="sound-icon" aria-hidden="true">♪</span></button>
           <div class="joycon-lines" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
         </aside>
         <div class="console-body">
@@ -47,7 +47,7 @@
               </section>
               <section class="game-page cards-page" id="cards-page" aria-labelledby="cards-title" hidden>
                 <header class="game-header"><div><p class="chapter-label">CHAPTER 02 · A MAP OF LITTLE WISHES</p><h2 id="cards-title">把小幸运，收进沿途的风景</h2></div><span class="count-badge"><svg aria-hidden="true"><use href="#pixel-leaf"/></svg><span id="collection-count">0 / 5</span></span></header>
-                <div class="wish-atlas wood-panel"><div class="atlas-heading"><span>SHANNON'S WISH MAP</span><span id="shelf-status">0 / 5 COLLECTED</span></div><div class="map-viewport" tabindex="0" role="region" aria-label="横跨太平洋的祝福地图，包含呼和浩特、上海、北京、成都与美国湾区。窄屏时可左右滑动。"><div class="map-canvas"><img class="china-map" src="assets/china-pixel-map.svg?v=bay-round-1" alt="像素风中国、太平洋与美国西部地图，湾区位于美国西海岸" width="800" height="340"><svg class="map-connectors" viewBox="0 0 800 340" aria-hidden="true"><path d="M310 116V103H270V90M344 124h35V95h23M381 190h48v19h27M256 195h-36v25M649 140h37v18h20"/><g class="city-pins"><rect x="306" y="112" width="8" height="8"/><rect x="340" y="120" width="8" height="8"/><rect x="377" y="186" width="8" height="8"/><rect x="252" y="191" width="8" height="8"/><rect x="645" y="136" width="8" height="8"/></g></svg><span class="map-land-label" aria-hidden="true">CHINA</span><span class="map-ocean-label" aria-hidden="true">PACIFIC OCEAN</span><span class="map-us-label" aria-hidden="true">USA</span><div class="card-shelf map-card-layer" id="card-shelf" aria-label="地图上的五张生日签卡"></div></div></div><p class="map-hint"><span class="map-pan-hint">左右滑动地图 · </span>点击已收集的签卡，重读一份祝福 <span aria-hidden="true">✦</span></p></div>
+                <div class="wish-atlas wood-panel"><div class="atlas-heading"><span>SHANNON'S WISH MAP</span><span id="shelf-status">0 / 5 COLLECTED</span></div><div class="map-viewport" tabindex="0" role="region" aria-label="横跨太平洋的祝福地图，包含呼和浩特、上海、北京、成都与美国湾区。窄屏时可左右滑动。"><div class="map-canvas"><img class="china-map" src="assets/china-pixel-map.svg?v=birthday-music-1" alt="像素风中国、太平洋与美国西部地图，湾区位于美国西海岸" width="800" height="340"><svg class="map-connectors" viewBox="0 0 800 340" aria-hidden="true"><path d="M310 116V103H270V90M344 124h35V95h23M381 190h48v19h27M256 195h-36v25M649 140h37v18h20"/><g class="city-pins"><rect x="306" y="112" width="8" height="8"/><rect x="340" y="120" width="8" height="8"/><rect x="377" y="186" width="8" height="8"/><rect x="252" y="191" width="8" height="8"/><rect x="645" y="136" width="8" height="8"/></g></svg><span class="map-land-label" aria-hidden="true">CHINA</span><span class="map-ocean-label" aria-hidden="true">PACIFIC OCEAN</span><span class="map-us-label" aria-hidden="true">USA</span><div class="card-shelf map-card-layer" id="card-shelf" aria-label="地图上的五张生日签卡"></div></div></div><p class="map-hint"><span class="map-pan-hint">左右滑动地图 · </span>点击已收集的签卡，重读一份祝福 <span aria-hidden="true">✦</span></p></div>
                 <div class="draw-field map-draw-bar"><div class="draw-prompt"><p id="draw-message" role="status" aria-live="polite">打开宝箱，点亮地图上的一份祝福。</p></div><button class="pixel-button primary-button" id="draw-button" type="button">抽取一张签卡 <span aria-hidden="true">✦</span></button></div>
                 <footer class="screen-navigation"><button class="pixel-button subtle-button" id="back-to-unlock" type="button">◀ 解锁画面</button><span class="page-dots" aria-label="第 2 页，共 4 页"><i></i><i class="active"></i><i></i><i></i></span><button class="pixel-button next-button" id="to-letter" type="button" disabled><span id="letter-cta">集齐后读信</span> <span aria-hidden="true">▶</span></button></footer>
               </section>
@@ -74,6 +74,7 @@
     </div>
     <footer class="desk-footer"><span><i class="power-dot" aria-hidden="true"></i> ONE PLAYER. FIVE LITTLE SURPRISES.</span><p><kbd>A</kbd> 确认 <kbd>B</kbd> 返回 <span class="footer-separator">/</span> <kbd>← ↑</kbd> 上一页 <kbd>→ ↓</kbd> 下一页</p><span class="footer-caption">MADE JUST FOR SHANNON <span aria-hidden="true">♡</span></span></footer><p class="orientation-note">横屏打开，更像一台真正的小掌机。</p>
   </main>
+  <audio id="birthday-music" src="assets/happy-birthday.mp3" preload="none"></audio>
   <noscript><p class="noscript-note">请开启 JavaScript，开始这场生日冒险。</p></noscript>
 </body>
 </html>

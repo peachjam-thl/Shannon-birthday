@@ -20,8 +20,8 @@ let activeCard=null;
 let activeCardIsNew=false;
 let completionSeen=false;
 let overlayReturnFocus=null;
-let soundEnabled=false;
-let audioContext=null;
+let musicStarting=false;
+let musicRequest=0;
 let toastTimer=null;
 let finalePreparation=null;
 const reducedMotion=()=>window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -46,9 +46,24 @@ function resetRound(){
 }
 function toast(message){clearTimeout(toastTimer);$('#screen-toast').textContent=message;$('#screen-toast').hidden=false;toastTimer=setTimeout(()=>{$('#screen-toast').hidden=true;},2200);}
 function dismissToast(){clearTimeout(toastTimer);$('#screen-toast').hidden=true;}
-function chime(kind='select'){
-  if(!soundEnabled)return;
-  try{audioContext ||=new(window.AudioContext||window.webkitAudioContext)();audioContext.resume().catch(()=>{});const notes=kind==='win'?[523.25,659.25,783.99,1046.5]:kind==='wrong'?[220,196]:[659.25,880];notes.forEach((frequency,i)=>{const oscillator=audioContext.createOscillator();const gain=audioContext.createGain();const time=audioContext.currentTime+i*.09;oscillator.type='square';oscillator.frequency.value=frequency;gain.gain.setValueAtTime(.025,time);gain.gain.exponentialRampToValueAtTime(.0001,time+.18);oscillator.connect(gain);gain.connect(audioContext.destination);oscillator.start(time);oscillator.stop(time+.2);});}catch{soundEnabled=false;$('#sound-toggle').setAttribute('aria-pressed','false');$('#sound-toggle').setAttribute('aria-label','开启游戏音效');}
+function syncMusicButton(){
+  const music=$('#birthday-music'),button=$('#sound-toggle');
+  const playing=!music.paused&&!music.ended&&!music.error;
+  const label=musicStarting?'正在加载生日歌，再次点击取消':playing?'暂停生日歌':'播放生日歌';
+  button.setAttribute('aria-pressed',String(playing));button.setAttribute('aria-label',label);button.title=label;
+  button.classList.toggle('music-playing',playing);button.classList.toggle('music-loading',musicStarting);
+  if(musicStarting)button.setAttribute('aria-busy','true');else button.removeAttribute('aria-busy');
+}
+async function toggleMusic(){
+  const music=$('#birthday-music');
+  if(musicStarting||!music.paused){musicRequest++;musicStarting=false;music.pause();syncMusicButton();return;}
+  const request=++musicRequest;musicStarting=true;syncMusicButton();
+  try{
+    if(music.error)music.load();
+    if(music.ended)music.currentTime=0;
+    await music.play();
+  }catch(error){if(request===musicRequest&&error.name!=='AbortError'&&!music.error)toast('生日歌暂时没播放成功，再点一次试试。');}
+  finally{if(request===musicRequest){musicStarting=false;syncMusicButton();}}
 }
 async function changePage(next){
   if(transitioning||drawing)return;
@@ -73,8 +88,8 @@ async function changePage(next){
 async function unlock(event){
   event.preventDefault();if(transitioning||drawing||pageIndex!==0||$('#unlock-button').disabled)return;
   const input=$('#character-answer');const status=$('#answer-status');
-  if(input.value!==CONTENT.answer){status.textContent=input.value?'好像不对哦，再想一想？':'先写下那个角色的名字吧。';status.className='answer-status error';input.setAttribute('aria-invalid','true');$('#unlock-form').classList.remove('wrong-answer');void $('#unlock-form').offsetWidth;$('#unlock-form').classList.add('wrong-answer');chime('wrong');input.focus();return;}
-  resetRound();input.removeAttribute('aria-invalid');status.textContent='回答正确！新一轮生日冒险正在开启……';status.className='answer-status success';unlocked=true;chime('win');$('#unlock-button').disabled=true;await delay(reducedMotion()?0:450);await changePage(1);$('#unlock-button').disabled=false;
+  if(input.value!==CONTENT.answer){status.textContent=input.value?'好像不对哦，再想一想？':'先写下那个角色的名字吧。';status.className='answer-status error';input.setAttribute('aria-invalid','true');$('#unlock-form').classList.remove('wrong-answer');void $('#unlock-form').offsetWidth;$('#unlock-form').classList.add('wrong-answer');input.focus();return;}
+  resetRound();input.removeAttribute('aria-invalid');status.textContent='回答正确！新一轮生日冒险正在开启……';status.className='answer-status success';unlocked=true;$('#unlock-button').disabled=true;await delay(reducedMotion()?0:450);await changePage(1);$('#unlock-button').disabled=false;
 }
 function renderCollection(){
   const shelf=$('#card-shelf');shelf.replaceChildren();
@@ -92,11 +107,11 @@ function renderCollection(){
 async function drawCard(){
   if(!unlocked||pageIndex!==1||transitioning||drawing)return;
   if(collection.length===CONTENT.cards.length){await changePage(2);return;}
-  dismissToast();closeCard(false);drawing=true;$('#draw-button').disabled=true;$('#draw-button').setAttribute('aria-busy','true');$('#draw-overlay').hidden=false;$('#screen-pages').inert=true;$('#pixel-chest').classList.add('drawing');$('#draw-message').textContent='宝箱里，有一份小幸运正在醒来……';chime();
+  dismissToast();closeCard(false);drawing=true;$('#draw-button').disabled=true;$('#draw-button').setAttribute('aria-busy','true');$('#draw-overlay').hidden=false;$('#screen-pages').inert=true;$('#pixel-chest').classList.add('drawing');$('#draw-message').textContent='宝箱里，有一份小幸运正在醒来……';
   const remaining=CONTENT.cards.filter(card=>!collection.includes(card.id));const random=new Uint32Array(1);crypto.getRandomValues(random);const card=remaining[Math.floor(random[0]/4294967296*remaining.length)];
   const picture=new Image();picture.src=card.image;
   await Promise.all([delay(reducedMotion()?80:1050),picture.decode().catch(()=>{})]);
-  collection.push(card.id);drawing=false;$('#draw-overlay').hidden=true;$('#screen-pages').inert=false;$('#draw-button').removeAttribute('aria-busy');$('#pixel-chest').classList.remove('drawing');renderCollection();showCard(card.id,true);particles();chime('win');
+  collection.push(card.id);drawing=false;$('#draw-overlay').hidden=true;$('#screen-pages').inert=false;$('#draw-button').removeAttribute('aria-busy');$('#pixel-chest').classList.remove('drawing');renderCollection();showCard(card.id,true);particles();
 }
 function showCard(id,isNew){
   if(!unlocked||pageIndex!==1||drawing||transitioning)return;
@@ -111,7 +126,7 @@ function showCard(id,isNew){
 }
 function closeCard(restoreFocus=true){if($('#card-overlay').hidden)return;const landedId=activeCardIsNew?activeCard:null;$('#card-overlay').hidden=true;$('#screen-pages').inert=false;activeCard=null;activeCardIsNew=false;if(landedId&&!reducedMotion()){const marker=$(`[data-card-id="${landedId}"]`);marker?.classList.add('just-collected');marker?.addEventListener('animationend',()=>marker.classList.remove('just-collected'),{once:true});}if(restoreFocus&&overlayReturnFocus?.isConnected)overlayReturnFocus.focus({preventScroll:true});}
 function acceptCard(){const summon=activeCardIsNew&&collection.length===CONTENT.cards.length&&!completionSeen;closeCard(!summon);if(summon)showCompletion();}
-function showCompletion(){if(!unlocked||drawing||transitioning||completionSeen||collection.length!==CONTENT.cards.length)return;dismissToast();closeCard(false);$('#screen-pages').inert=true;$('#completion-overlay').hidden=false;$('#completion-continue').focus({preventScroll:true});particles();chime('win');}
+function showCompletion(){if(!unlocked||drawing||transitioning||completionSeen||collection.length!==CONTENT.cards.length)return;dismissToast();closeCard(false);$('#screen-pages').inert=true;$('#completion-overlay').hidden=false;$('#completion-continue').focus({preventScroll:true});particles();}
 function closeCompletion(restoreFocus=true){if($('#completion-overlay').hidden)return;$('#completion-overlay').hidden=true;$('#screen-pages').inert=false;if(restoreFocus)$('#to-letter').focus({preventScroll:true});}
 async function continueCompletion(){if($('#completion-overlay').hidden||transitioning||drawing)return;completionSeen=true;closeCompletion(false);renderCollection();await changePage(2);}
 function particles(){if(reducedMotion())return;const host=$('#screen-particles');for(let i=0;i<17;i++){const piece=document.createElement('i');piece.style.left=`${25+Math.random()*50}%`;piece.style.top=`${10+Math.random()*15}%`;piece.style.background=['#ffe3a0','#e9a0a0','#b9dc87'][i%3];piece.style.setProperty('--drift',`${(Math.random()-.5)*110}px`);host.append(piece);piece.addEventListener('animationend',()=>piece.remove(),{once:true});}}
@@ -130,7 +145,12 @@ $('#back-minus').addEventListener('click',previousPage);$('#next-plus').addEvent
 $('#home-button').addEventListener('click',()=>{closeCard(false);changePage(0);});$('#brand-home').addEventListener('click',event=>{event.preventDefault();closeCard(false);changePage(0);});
 document.querySelectorAll('[data-direction]').forEach(button=>button.addEventListener('click',()=>navigateDirection(button.dataset.direction)));
 document.querySelectorAll('[data-game-action]').forEach(button=>button.addEventListener('click',()=>{const action=button.dataset.gameAction;if(action==='a')confirmAction();else if(action==='b')previousPage();else if(unlocked){closeCompletion(false);closeCard(false);changePage(1);}else toast('先解锁生日冒险，再查看收藏。');}));
-$('#sound-toggle').addEventListener('click',()=>{soundEnabled=!soundEnabled;$('#sound-toggle').setAttribute('aria-pressed',String(soundEnabled));$('#sound-toggle').setAttribute('aria-label',soundEnabled?'关闭游戏音效':'开启游戏音效');if(soundEnabled)chime();});
+$('#sound-toggle').addEventListener('click',toggleMusic);
+const birthdayMusic=$('#birthday-music');birthdayMusic.volume=.65;
+for(const event of ['play','pause','ended'])birthdayMusic.addEventListener(event,syncMusicButton);
+birthdayMusic.addEventListener('playing',()=>{musicStarting=false;syncMusicButton();});
+birthdayMusic.addEventListener('error',()=>{musicStarting=false;syncMusicButton();toast('生日歌加载失败，再点一次试试。');});
+syncMusicButton();
 $('#card-overlay').addEventListener('keydown',event=>{if(event.key==='Tab'){const first=$('#close-card'),last=$('#draw-next');if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}}});
 $('#completion-overlay').addEventListener('keydown',event=>{if(event.key==='Tab'){event.preventDefault();$('#completion-continue').focus();}});
 document.addEventListener('keydown',event=>{if(event.isComposing)return;if(event.key==='Escape'){if(!$('#completion-overlay').hidden){event.preventDefault();closeCompletion();}else if(!$('#card-overlay').hidden){event.preventDefault();closeCard();}return;}if(event.target.matches('input,textarea'))return;const direction={ArrowLeft:'left',ArrowUp:'up',ArrowRight:'right',ArrowDown:'down'}[event.key];if(direction){event.preventDefault();navigateDirection(direction);}});
