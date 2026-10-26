@@ -46,10 +46,10 @@ async function unlock(event){
 }
 function renderCollection(){
   const shelf=$('#card-shelf');shelf.replaceChildren();
-  for(const card of CONTENT.cards){const got=collection.includes(card.id);const button=document.createElement('button');button.type='button';button.className='shelf-card'+(got?' collected':'');button.disabled=!got;button.dataset.cardId=card.id;button.setAttribute('aria-label',got?`查看第 ${card.id} 张签卡`:`第 ${card.id} 张签卡，尚未收集`);
+  for(const card of CONTENT.cards){const got=collection.includes(card.id);const button=document.createElement('button');button.type='button';button.className='shelf-card'+(got?' collected':'');button.disabled=!got;button.dataset.cardId=card.id;const name=card.title||`第 ${card.id} 张`;button.setAttribute('aria-label',got?`查看${name}签卡`:`${name}签卡，尚未收集`);
     if(got){const illustration=document.createElement('span');illustration.className='mini-illustration';if(card.image){const img=document.createElement('img');img.src=card.image;img.alt=card.imageAlt||card.title||`第 ${card.id} 张签卡插图`;illustration.append(img);}button.append(illustration);button.addEventListener('click',()=>showCard(card.id,false));}
     else{const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('class','card-back-star');svg.setAttribute('aria-hidden','true');const use=document.createElementNS('http://www.w3.org/2000/svg','use');use.setAttribute('href','#pixel-star');svg.append(use);button.append(svg);}
-    const number=document.createElement('span');number.className='shelf-card-number';number.textContent=card.id;button.append(number);shelf.append(button);
+    const label=document.createElement('span');label.className='shelf-card-label';label.textContent=card.title||card.id;button.append(label);shelf.append(button);
   }
   const complete=collection.length===CONTENT.cards.length;
   $('#collection-count').textContent=`${collection.length} / ${CONTENT.cards.length}`;$('#shelf-status').textContent=`${collection.length} / ${CONTENT.cards.length} COLLECTED`;
@@ -71,6 +71,7 @@ function showCard(id,isNew){
   $('#reveal-heading').textContent=isNew?'NEW CARD · A LITTLE LUCK FOR YOU':'YOUR LITTLE LUCK COLLECTION';$('#reveal-number').textContent='CARD '+card.id;
   const illustration=$('#reveal-illustration');illustration.replaceChildren();illustration.removeAttribute('aria-label');if(card.image){const image=document.createElement('img');image.src=card.image;image.alt=card.imageAlt||card.title||`第 ${card.id} 张签卡插图`;illustration.append(image);}else illustration.setAttribute('aria-label','空白插图区域');
   $('#reveal-title').textContent=card.title;$('#reveal-title').hidden=!card.title;$('#reveal-text').textContent=card.text;
+  $('#reveal-card').classList.toggle('has-copy',Boolean(card.title||card.text));
   $('#reveal-card').setAttribute('aria-label',card.title||`第 ${card.id} 张生日签卡`);
   $('#draw-next').textContent=collection.length===CONTENT.cards.length?(completionSeen?'打开信件 ▶':'召唤奶蛙 ▶'):'再抽一张 ▶';$('#close-card').textContent=isNew?'收进收藏夹':'返回收藏夹';
   $('#screen-pages').inert=true;$('#card-overlay').hidden=false;$('#close-card').focus({preventScroll:true});

@@ -15,10 +15,12 @@
 
 只修改 `dist/content.js`：
 
-- `cards` 固定五项，`image` 按顺序使用用户图 1–5（紫、蓝、红、绿、橙）；`title`、`text` 仍为空字符串。
+- `cards` 固定五项，`image` 按顺序使用用户图 1–5（紫、蓝、红、绿、橙）；`title` 为自在、冷静、发财、生命、热情，`text` 按用户原稿逐字填写。
 - `letter.title`、`letter.text`、`letter.signature` 当前均为空字符串。
 - 插图放在 `dist/assets/`，例如 `image: 'assets/card-01.png'`。
 - 正文换行使用 `\n`。默认空白区域不显示示例祝福。
+
+收藏夹卡片下方显示两字标题，内部 `id` 保留以兼容已有收集进度。含签文的卡片适当缩小顶部插图区，保留像素字体和下方签文阅读区。
 
 六张奶蛙图片均直接复制用户原始 PNG，SHA-256 一致，不重新生成或修改图像。收藏夹与抽签弹窗共用各自对应图片；图 6 使用 `assets/frog-summoned.png`。
 
