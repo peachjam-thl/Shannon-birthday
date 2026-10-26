@@ -1,5 +1,20 @@
 # 第二版像素素材
 
+## 奶蛙签卡及集齐弹窗
+
+本轮用户提供的六张 PNG 直接复制到项目，复制前后逐项核验 SHA-256 相同，未改色、重绘或裁切。
+
+| 用户图片 | 资产路径 | 用途 |
+| --- | --- | --- |
+| 图 1，紫色 | `dist/assets/frog-card-01.png` | 第 01 张签卡与收藏缩略图 |
+| 图 2，蓝色 | `dist/assets/frog-card-02.png` | 第 02 张签卡与收藏缩略图 |
+| 图 3，红色 | `dist/assets/frog-card-03.png` | 第 03 张签卡与收藏缩略图 |
+| 图 4，绿色 | `dist/assets/frog-card-04.png` | 第 04 张签卡与收藏缩略图 |
+| 图 5，橙色 | `dist/assets/frog-card-05.png` | 第 05 张签卡与收藏缩略图 |
+| 图 6，黄色 | `dist/assets/frog-summoned.png` | 集齐五张后的恭喜弹窗 |
+
+以下为此前页面素材记录。
+
 - `dist/assets/birthday-duck.png`：直接使用用户提供的本轮图一，右侧展示。
 - `dist/assets/shannon-pixel.png`：以本轮图二为目标，使用内置 image_gen 去除外部灰白棋盘格背景。保留肖像、姿态、服装和像素风格，左侧展示。
 - `dist/assets/pixel-meadow.png`：使用内置 image_gen 创建的原创像素乡野背景。

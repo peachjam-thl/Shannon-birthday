@@ -9,6 +9,8 @@ let transitioning=false;
 let drawing=false;
 let collection=readCollection();
 let activeCard=null;
+let activeCardIsNew=false;
+let completionSeen=false;
 let overlayReturnFocus=null;
 let soundEnabled=false;
 let audioContext=null;
@@ -26,9 +28,11 @@ function chime(kind='select'){
 }
 async function changePage(next){
   if(transitioning||drawing)return;
+  if(next<2)closeCompletion(false);
   if(next<0||next>=pages.length||next===pageIndex)return;
   if(next>0&&!unlocked){toast('先回答问题，解锁生日冒险。');$('#character-answer').focus();return;}
   if(next>=2&&collection.length<CONTENT.cards.length){toast('再收集 '+(CONTENT.cards.length-collection.length)+' 张签卡，就能打开信件。');return;}
+  if(next>=2&&!completionSeen){showCompletion();return;}
   dismissToast();closeCard(false);transitioning=true;const current=$('#'+pages[pageIndex]);const target=$('#'+pages[next]);
   current.classList.add('page-leaving');await delay(reducedMotion()?0:150);current.hidden=true;current.classList.remove('page-leaving');target.hidden=false;target.classList.add('page-entering');target.scrollTop=0;pageIndex=next;
   await delay(reducedMotion()?0:230);target.classList.remove('page-entering');transitioning=false;
@@ -43,14 +47,14 @@ async function unlock(event){
 function renderCollection(){
   const shelf=$('#card-shelf');shelf.replaceChildren();
   for(const card of CONTENT.cards){const got=collection.includes(card.id);const button=document.createElement('button');button.type='button';button.className='shelf-card'+(got?' collected':'');button.disabled=!got;button.dataset.cardId=card.id;button.setAttribute('aria-label',got?`查看第 ${card.id} 张签卡`:`第 ${card.id} 张签卡，尚未收集`);
-    if(got){const illustration=document.createElement('span');illustration.className='mini-illustration';if(card.image){const img=document.createElement('img');img.src=card.image;img.alt=card.title||`第 ${card.id} 张签卡插图`;illustration.append(img);}button.append(illustration);button.addEventListener('click',()=>showCard(card.id,false));}
+    if(got){const illustration=document.createElement('span');illustration.className='mini-illustration';if(card.image){const img=document.createElement('img');img.src=card.image;img.alt=card.imageAlt||card.title||`第 ${card.id} 张签卡插图`;illustration.append(img);}button.append(illustration);button.addEventListener('click',()=>showCard(card.id,false));}
     else{const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('class','card-back-star');svg.setAttribute('aria-hidden','true');const use=document.createElementNS('http://www.w3.org/2000/svg','use');use.setAttribute('href','#pixel-star');svg.append(use);button.append(svg);}
     const number=document.createElement('span');number.className='shelf-card-number';number.textContent=card.id;button.append(number);shelf.append(button);
   }
   const complete=collection.length===CONTENT.cards.length;
   $('#collection-count').textContent=`${collection.length} / ${CONTENT.cards.length}`;$('#shelf-status').textContent=`${collection.length} / ${CONTENT.cards.length} COLLECTED`;
-  $('#to-letter').disabled=!complete;$('#letter-cta').textContent=complete?'打开信件':'集齐后读信';
-  $('#draw-button').textContent=complete?'五张集齐了，去读信 ▶':'抽取一张签卡 ✦';$('#draw-button').disabled=drawing;
+  $('#to-letter').disabled=!complete;$('#letter-cta').textContent=complete?(completionSeen?'打开信件':'召唤奶蛙'):'集齐后读信';
+  $('#draw-button').textContent=complete?(completionSeen?'五张集齐了，去读信 ▶':'五蛙集齐，召唤奶蛙 ✦'):'抽取一张签卡 ✦';$('#draw-button').disabled=drawing;
   $('#draw-message').textContent=complete?'五张签卡，已经全部收进背包。':'打开宝箱，抽一张生日签卡。';
 }
 async function drawCard(){
@@ -63,33 +67,38 @@ async function drawCard(){
 }
 function showCard(id,isNew){
   if(!unlocked||pageIndex!==1||drawing||transitioning)return;
-  const card=CONTENT.cards.find(item=>item.id===id);if(!card)return;activeCard=id;overlayReturnFocus=document.activeElement;
+  const card=CONTENT.cards.find(item=>item.id===id);if(!card)return;activeCard=id;activeCardIsNew=isNew;overlayReturnFocus=document.activeElement;
   $('#reveal-heading').textContent=isNew?'NEW CARD · A LITTLE LUCK FOR YOU':'YOUR LITTLE LUCK COLLECTION';$('#reveal-number').textContent='CARD '+card.id;
-  const illustration=$('#reveal-illustration');illustration.replaceChildren();if(card.image){const image=document.createElement('img');image.src=card.image;image.alt=card.title||`第 ${card.id} 张签卡插图`;illustration.append(image);}else illustration.setAttribute('aria-label','空白插图区域');
+  const illustration=$('#reveal-illustration');illustration.replaceChildren();illustration.removeAttribute('aria-label');if(card.image){const image=document.createElement('img');image.src=card.image;image.alt=card.imageAlt||card.title||`第 ${card.id} 张签卡插图`;illustration.append(image);}else illustration.setAttribute('aria-label','空白插图区域');
   $('#reveal-title').textContent=card.title;$('#reveal-title').hidden=!card.title;$('#reveal-text').textContent=card.text;
-  $('#reveal-card').setAttribute('aria-label',card.title||`第 ${card.id} 张签卡，插图和文字暂留空白`);
-  $('#draw-next').textContent=collection.length===CONTENT.cards.length?'打开信件 ▶':'再抽一张 ▶';$('#close-card').textContent=isNew?'收进收藏夹':'返回收藏夹';
+  $('#reveal-card').setAttribute('aria-label',card.title||`第 ${card.id} 张生日签卡`);
+  $('#draw-next').textContent=collection.length===CONTENT.cards.length?(completionSeen?'打开信件 ▶':'召唤奶蛙 ▶'):'再抽一张 ▶';$('#close-card').textContent=isNew?'收进收藏夹':'返回收藏夹';
   $('#screen-pages').inert=true;$('#card-overlay').hidden=false;$('#close-card').focus({preventScroll:true});
 }
-function closeCard(restoreFocus=true){if($('#card-overlay').hidden)return;$('#card-overlay').hidden=true;$('#screen-pages').inert=false;activeCard=null;if(restoreFocus&&overlayReturnFocus?.isConnected)overlayReturnFocus.focus({preventScroll:true});}
+function closeCard(restoreFocus=true){if($('#card-overlay').hidden)return;$('#card-overlay').hidden=true;$('#screen-pages').inert=false;activeCard=null;activeCardIsNew=false;if(restoreFocus&&overlayReturnFocus?.isConnected)overlayReturnFocus.focus({preventScroll:true});}
+function acceptCard(){const summon=activeCardIsNew&&collection.length===CONTENT.cards.length&&!completionSeen;closeCard(!summon);if(summon)showCompletion();}
+function showCompletion(){if(!unlocked||drawing||transitioning||completionSeen||collection.length!==CONTENT.cards.length)return;dismissToast();closeCard(false);$('#screen-pages').inert=true;$('#completion-overlay').hidden=false;$('#completion-continue').focus({preventScroll:true});particles();chime('win');}
+function closeCompletion(restoreFocus=true){if($('#completion-overlay').hidden)return;$('#completion-overlay').hidden=true;$('#screen-pages').inert=false;if(restoreFocus)$('#to-letter').focus({preventScroll:true});}
+async function continueCompletion(){if($('#completion-overlay').hidden||transitioning||drawing)return;completionSeen=true;closeCompletion(false);renderCollection();await changePage(2);}
 function particles(){if(reducedMotion())return;const host=$('#screen-particles');for(let i=0;i<17;i++){const piece=document.createElement('i');piece.style.left=`${25+Math.random()*50}%`;piece.style.top=`${10+Math.random()*15}%`;piece.style.background=['#ffe3a0','#e9a0a0','#b9dc87'][i%3];piece.style.setProperty('--drift',`${(Math.random()-.5)*110}px`);host.append(piece);piece.addEventListener('animationend',()=>piece.remove(),{once:true});}}
 function fillLetter(){const letter=CONTENT.letter;$('#letter-title').textContent=letter.title;$('#letter-title').hidden=!letter.title;$('#letter-text').textContent=letter.text;$('#letter-signature').textContent=letter.signature;$('#letter-signature').hidden=!letter.signature;$('#letter-page article').setAttribute('aria-label',letter.text?'给 Shannon 的生日祝福':'生日祝福，等待后续填入');}
-function nextPage(){if(!$('#card-overlay').hidden){closeCard();return;}if(pageIndex===0){if(unlocked)changePage(1);else{toast('输入你最喜欢的角色，开始冒险。');$('#character-answer').focus();}}else if(pageIndex<pages.length-1)changePage(pageIndex+1);}
-function previousPage(){if(!$('#card-overlay').hidden){closeCard();return;}if(pageIndex>0)changePage(pageIndex-1);}
-function confirmAction(){if(!$('#card-overlay').hidden){closeCard();return;}if(pageIndex===0)$('#unlock-form').requestSubmit();else if(pageIndex===1)drawCard();else if(pageIndex===2)changePage(3);}
+function nextPage(){if(!$('#completion-overlay').hidden){continueCompletion();return;}if(!$('#card-overlay').hidden){acceptCard();return;}if(pageIndex===0){if(unlocked)changePage(1);else{toast('输入你最喜欢的角色，开始冒险。');$('#character-answer').focus();}}else if(pageIndex<pages.length-1)changePage(pageIndex+1);}
+function previousPage(){if(!$('#completion-overlay').hidden){closeCompletion();return;}if(!$('#card-overlay').hidden){closeCard();return;}if(pageIndex>0)changePage(pageIndex-1);}
+function confirmAction(){if(!$('#completion-overlay').hidden){continueCompletion();return;}if(!$('#card-overlay').hidden){acceptCard();return;}if(pageIndex===0)$('#unlock-form').requestSubmit();else if(pageIndex===1)drawCard();else if(pageIndex===2)changePage(3);}
 function navigateDirection(direction){if(direction==='left'||direction==='up')previousPage();else if(direction==='right'||direction==='down')nextPage();}
 $('#unlock-form').addEventListener('submit',unlock);
 $('#character-answer').addEventListener('input',()=>{$('#character-answer').removeAttribute('aria-invalid');$('#answer-status').className='answer-status';$('#answer-status').textContent='只有你知道的答案，才能打开这份礼物。';});
-$('#draw-button').addEventListener('click',drawCard);$('#close-card').addEventListener('click',()=>closeCard());
+$('#draw-button').addEventListener('click',drawCard);$('#close-card').addEventListener('click',acceptCard);$('#completion-continue').addEventListener('click',continueCompletion);
 $('#draw-next').addEventListener('click',()=>{closeCard(false);if(collection.length===CONTENT.cards.length)changePage(2);else drawCard();});
 $('#to-letter').addEventListener('click',()=>changePage(2));$('#back-to-cards').addEventListener('click',()=>changePage(1));$('#back-to-unlock').addEventListener('click',()=>changePage(0));
 $('#to-finale').addEventListener('click',()=>changePage(3));$('#back-to-letter').addEventListener('click',()=>changePage(2));
 $('#back-minus').addEventListener('click',previousPage);$('#next-plus').addEventListener('click',nextPage);
 $('#home-button').addEventListener('click',()=>{closeCard(false);changePage(0);});$('#brand-home').addEventListener('click',event=>{event.preventDefault();closeCard(false);changePage(0);});
 document.querySelectorAll('[data-direction]').forEach(button=>button.addEventListener('click',()=>navigateDirection(button.dataset.direction)));
-document.querySelectorAll('[data-game-action]').forEach(button=>button.addEventListener('click',()=>{const action=button.dataset.gameAction;if(action==='a')confirmAction();else if(action==='b')previousPage();else if(unlocked){closeCard(false);changePage(1);}else toast('先解锁生日冒险，再查看收藏。');}));
+document.querySelectorAll('[data-game-action]').forEach(button=>button.addEventListener('click',()=>{const action=button.dataset.gameAction;if(action==='a')confirmAction();else if(action==='b')previousPage();else if(unlocked){closeCompletion(false);closeCard(false);changePage(1);}else toast('先解锁生日冒险，再查看收藏。');}));
 $('#sound-toggle').addEventListener('click',()=>{soundEnabled=!soundEnabled;$('#sound-toggle').setAttribute('aria-pressed',String(soundEnabled));$('#sound-toggle').setAttribute('aria-label',soundEnabled?'关闭游戏音效':'开启游戏音效');if(soundEnabled)chime();});
 $('#card-overlay').addEventListener('keydown',event=>{if(event.key==='Tab'){const first=$('#close-card'),last=$('#draw-next');if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}}});
-document.addEventListener('keydown',event=>{if(event.isComposing)return;if(event.key==='Escape'){if(!$('#card-overlay').hidden){event.preventDefault();closeCard();}return;}if(event.target.matches('input,textarea'))return;const direction={ArrowLeft:'left',ArrowUp:'up',ArrowRight:'right',ArrowDown:'down'}[event.key];if(direction){event.preventDefault();navigateDirection(direction);}});
+$('#completion-overlay').addEventListener('keydown',event=>{if(event.key==='Tab'){event.preventDefault();$('#completion-continue').focus();}});
+document.addEventListener('keydown',event=>{if(event.isComposing)return;if(event.key==='Escape'){if(!$('#completion-overlay').hidden){event.preventDefault();closeCompletion();}else if(!$('#card-overlay').hidden){event.preventDefault();closeCard();}return;}if(event.target.matches('input,textarea'))return;const direction={ArrowLeft:'left',ArrowUp:'up',ArrowRight:'right',ArrowDown:'down'}[event.key];if(direction){event.preventDefault();navigateDirection(direction);}});
 window.addEventListener('storage',event=>{if(event.key===STORAGE_KEY&&!drawing){collection=readCollection();renderCollection();}});
 renderCollection();fillLetter();
