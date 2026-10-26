@@ -1,4 +1,4 @@
-"""Build the code-drawn pixel map from the retained DataV GeoJSON boundary data."""
+"""Draw the birthday atlas from retained DataV and Natural Earth geometry."""
 import json
 import random
 from pathlib import Path
@@ -11,6 +11,11 @@ W, H, CELL = 800, 340, 4
 def project(point):
     lon, lat = point[:2]
     return 32 + (lon - 73) * 7.2, 15 + (54 - lat) * 7.7
+
+def project_us(point):
+    lon, lat = point[:2]
+    # The Pacific is compressed for this illustrated travel map.
+    return 630 + (lon + 125) * 7.2, 15 + (54 - lat) * 7.7
 
 mask = Image.new('L', (W, H))
 draw = ImageDraw.Draw(mask)
@@ -25,6 +30,15 @@ for feature in data['features']:
         draw.polygon([project(p) for p in polygon[0]], fill=255)
         for hole in polygon[1:]:
             draw.polygon([project(p) for p in hole], fill=0)
+
+usa = json.loads((ROOT / 'usa-boundaries.geojson').read_text(encoding='utf-8'))
+for feature in usa['features']:
+    for polygon in feature['geometry']['coordinates']:
+        if not any(-126 < p[0] < -100 and 24 < p[1] < 50 for p in polygon[0]):
+            continue
+        draw.polygon([project_us(p) for p in polygon[0]], fill=255)
+        for hole in polygon[1:]:
+            draw.polygon([project_us(p) for p in hole], fill=0)
 
 small = mask.resize((W // CELL, H // CELL), Image.Resampling.NEAREST)
 land = small.resize((W, H), Image.Resampling.NEAREST)
@@ -45,19 +59,20 @@ for y in range(0, H, CELL):
         svg.append(f'<rect x="{x}" y="{y}" width="4" height="4" fill="{color}"/>')
 
 # Original pixel scenery, kept away from the four city anchors.
-for x, y in [(102,116),(122,100),(141,127),(154,145),(182,157),(202,169),(219,145)]:
+for x, y in [(102,116),(122,100),(141,127),(154,145),(182,157),(202,169),(219,145),(708,91),(728,113),(751,134),(768,154)]:
     svg.append(f'<path transform="translate({x} {y})" d="M0 16h4v-4h4V8h4V4h4v4h4v4h4v4h4v4H0z" fill="#6c8b61"/><path transform="translate({x} {y})" d="M8 12V8h4V4h4v4h4v4h-4V8h-4v4z" fill="#e5dcaa"/>')
-for x,y in [(139,198),(157,214),(279,257),(299,241),(331,220),(364,268),(436,81),(449,66),(411,43),(426,28)]:
+for x,y in [(139,198),(157,214),(279,257),(299,241),(331,220),(364,268),(436,81),(449,66),(411,43),(426,28),(651,65),(668,77),(687,92),(746,67),(771,79)]:
     if not land.getpixel((x,y)):
         continue
     svg.append(f'<path transform="translate({x} {y})" d="M6 0h4v4h4v4h4v4h-6v8H6v-8H0V8h4V4h2z" fill="#527a50"/><path transform="translate({x} {y})" d="M6 0h4v4h4v4H4V4h2z" fill="#729754"/><path transform="translate({x} {y})" d="M7 16h4v6H7z" fill="#805b3d"/>')
 
 # Decorative sailing route across the Pacific, not a geographic boundary.
-svg.append('<path d="M498 242h40v-16h40v-20h44v-18h52v-12h50" fill="none" stroke="#ebdfad" stroke-width="3" stroke-dasharray="7 7"/>')
+svg.append('<path d="M442 243h48v-20h40v-25h44v-25h36v-24h38" fill="none" stroke="#ebdfad" stroke-width="3" stroke-dasharray="7 7"/>')
+svg.append('<path d="M650 138h8v4h4v4h4v8h-4v-4h-4v-4h-4v-4h-4z" fill="#83bfc3"/>')
 svg.append('<path d="M727 176h-12v-6h6v-6h6v6h6v6h-6z" fill="#fff0c4"/>')
 # Compass and a tiny sailboat.
-svg.append('<g transform="translate(735 34)"><path d="M0 0h4v14h10v4H4v14H0V18h-10v-4H0z" fill="#56838a"/><path d="M0 0h4v14h-4z" fill="#f3e8b5"/></g>')
+svg.append('<g transform="translate(571 50)"><path d="M0 0h4v14h10v4H4v14H0V18h-10v-4H0z" fill="#56838a"/><path d="M0 0h4v14h-4z" fill="#f3e8b5"/></g>')
 svg.append('<g transform="translate(567 268)"><path d="M0 16h36v4h-4v4H8v-4H4z" fill="#865d40"/><path d="M17 0h3v16h-3z" fill="#755536"/><path d="M14 0v13H2v-3h3V7h3V4h3V0zM23 4v10h10v-3h-3V8h-3V4z" fill="#fff0c4"/></g>')
 svg.append('</svg>')
 (ROOT / 'dist/assets/china-pixel-map.svg').write_text(''.join(svg), encoding='utf-8')
-print('Built China pixel map from DataV boundaries (800 x 340).')
+print('Built China / Pacific / western US pixel atlas (800 x 340).')

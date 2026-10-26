@@ -1,10 +1,11 @@
 # 第二版像素素材
 
-## 中国祝福地图
+## 中美祝福地图
 
 - `dist/assets/china-pixel-map.svg` 由项目脚本 `build-map.py` 绘制，使用保留在 `china-boundaries.geojson` 的阿里云 DataV.GeoAtlas 全国省级边界数据：[地图工具](https://datav.aliyun.com/portal/school/atlas/area_selector)、[原始 GeoJSON](https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json)。
-- 坐标按一致投影转换，再用 4 像素网格绘制陆地、海岸及原创像素山丘、树林、船只。图为生日游戏的旅行示意背景；海上的虚线是装饰航线。未使用星露谷游戏原版素材。
-- 四个城市定位点采用相同数据的省级行政中心坐标：呼和浩特 111.670801/40.818311，北京 116.405285/39.904989，上海 121.472644/31.231706，成都 104.065735/30.659462。卡片用引线与定位点连接。橙色卡放在东侧太平洋，标注“朝美国方向”。
+- 美国西部轮廓来自 [Natural Earth 1:10m Admin 0 countries](https://www.naturalearthdata.com/downloads/10m-cultural-vectors/10m-admin-0-countries/)，从[作者仓库 GeoJSON](https://github.com/nvkelso/natural-earth-vector/blob/master/geojson/ne_10m_admin_0_countries.geojson)提取美国要素，保留为 `usa-boundaries.geojson`；地图边缘裁去美国东部。湾区海岸增加像素入口强调，定位点取旧金山湾周边约 -122.4/37.8。
+- 两侧陆地按相同比例转换，并压缩太平洋间距，再用 4 像素网格绘制陆地、海岸及原创像素山丘、树林、船只。图为生日游戏的旅行示意背景；海上的虚线是装饰航线。未使用星露谷游戏原版素材。
+- 四个中国城市定位点采用相同数据的省级行政中心坐标：呼和浩特 111.670801/40.818311，北京 116.405285/39.904989，上海 121.472644/31.231706，成都 104.065735/30.659462。五张卡片用引线与定位点连接，橙色热情卡在美国湾区。页面已删除美国方向文字。
 - 地图为本地 SVG，不依赖在线地图服务或远程图片请求；原始六张奶蛙图片继续直接使用。
 
 ## 奶蛙签卡及集齐弹窗
