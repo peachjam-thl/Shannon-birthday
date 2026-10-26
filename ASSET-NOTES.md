@@ -13,4 +13,12 @@ Use case: background-extraction. Edit target is the attached pixel-art portrait.
 
 ## 像素背景最终提示词
 
+乡野背景：`dist/assets/pixel-meadow.png`。
+
 Use case: illustration-story. Original cozy 16-bit pixel-art countryside landscape, a backdrop for a birthday game screen inside a handheld console. Wide landscape 16:9 aspect ratio. Work as true low-resolution game art, approximately 384 by 216 logical pixels scaled with crisp nearest-neighbor edges, square pixel clusters, limited cohesive color palette. Warm peaceful farming-sim mood like classic rural life games. Bright clear turquoise blue sky in top third, a few tiny pixel clouds, soft distant blue-purple mountains, dark green tree silhouettes at the two far sides, sunny green meadow foreground, a little dirt path at bottom, a few small white daisies and golden flowers at bottom corners. The central two-thirds must be open and quiet for game interface overlay, no houses or focal objects there. Afternoon golden light, vivid but gentle colors. No people, no portraits, no game UI, no writing, no text, no logos, no copied game assets, no gradients, no vector curves, no blur, no 3D, no photographic texture. Output a clean flat rectangle that can fill the entire game screen.
+
+## 星空结尾背景最终提示词
+
+资产：`dist/assets/pixel-starfield.png`。使用内置 image_gen 工具生成。
+
+Use case: illustration-story. Original cozy 16-bit pixel-art starry night sky for the final screen of a birthday game inside a handheld console. Wide 16:9 landscape. Same peaceful rural farming-sim feeling as a warm classic pixel countryside game. True crisp square pixel clusters at approximately 384x216 logical pixels, limited navy blue, indigo, lavender, dusty pink and warm pale gold palette. Star-filled clear indigo sky occupies about 85 percent of the canvas. Tiny blocky gold and cream stars of different sizes, a very subtle pale lavender Milky Way band high at one side, a small simple crescent moon near the upper-right corner. Quiet distant dark-purple mountains and dark blue pine silhouettes confined to the bottom 12 percent, like a peaceful sleeping valley. Keep the whole center spacious, dark and fairly calm to support very large gold birthday typography added later in HTML. Pixel art with visible square steps, flat colors, no blur, no photorealism, no gradients, no 3D, no text, no letters, no UI, no logo, no copied game assets. Landscape fills a game screen edge to edge.
