@@ -1,5 +1,18 @@
 # 第二版像素素材
 
+## 夕阳接礼物与生日许愿小屋
+
+- 使用内置 ImageGen 生成两张原创像素背景，并复制到项目：`dist/assets/pixel-gift-garden.png`、`dist/assets/pixel-wish-cottage.png`，均为 1672×941 PNG。两张背景与星空背景均在开始时预加载，切换前等待解码。
+- 奶蛙小游戏角色、礼物、星星、蛋糕、五根可熄灭蜡烛及萤火虫效果为项目原生 SVG/CSS/JS，不是游戏原版素材。用户原有签卡和人物图片未修改。
+
+接礼物背景最终提示词（内置工具）：
+
+Use case: illustration-story. Asset type: original backdrop for a birthday mini game inside a handheld console. Wide landscape 16:9. A cozy 16-bit pixel-art country garden at golden sunset: apricot pink sky, lilac distant hills, green grass along the very bottom, softly lit rustic cottage and apple trees confined to the far left and right edges, tiny flowers at bottom corners, a subtle string of birthday bunting at top edge. Center 70 percent is open and calm for falling gift sprites, NO characters, NO gifts, NO interface, NO text. Crisp square pixel clusters, approximately 384x216 logical pixels enlarged with nearest-neighbor feel, limited cohesive warm palette, flat game art, rural farming-sim mood, original art without copied game assets. No blur, no 3D, no photographic texture. The sky occupies upper 70 percent and the ground lower 20 percent. Full rectangular background, no borders.
+
+许愿背景最终提示词（内置工具）：
+
+Use case: illustration-story. Asset type: original backdrop for a birthday wish scene inside a handheld console. Wide landscape 16:9. Cozy 16-bit pixel-art wooden cottage interior at night, amber lamplight, a small blue-purple starry window at upper left, rustic shelves and a few flowers at the far edges, gentle hanging warm fairy lights at the top. A broad simple wooden tabletop across lower 25 percent, with completely EMPTY central tabletop where an interactive cake will be drawn by code. Central 60 percent spacious, quiet dark warm brown backdrop. No cake, no candles in the center, no people, no UI, no writing, no text, no letters. Crisp square pixel clusters, approximately 384x216 logical pixels enlarged with nearest-neighbor feel, warm honey, chestnut, soft rose and night blue palette. Original cozy rural farming-sim game art, no copied assets, no blur, no smooth vector curves, no photorealism, no 3D, no borders.
+
 ## 用户提供的生日歌
 
 - 原文件：`D:/GOOGLEDownload/the_mountain-happy-birthday-576570.mp3`。
