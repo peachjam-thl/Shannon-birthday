@@ -8,7 +8,7 @@ const CARD_PLACES={
   '02':{name:'上海',x:57,y:49.4,color:'#4e9fd3'},
   '03':{name:'北京',x:50.25,y:14.7,color:'#cf5e54'},
   '04':{name:'成都',x:27.5,y:60.6,color:'#78a357'},
-  '05':{name:'湾区',x:91.25,y:36,color:'#e89b42'}
+  '05':{name:'湾区',x:91.25,y:55,color:'#e89b42'}
 };
 const pages=['unlock-page','cards-page','gifts-page','letter-page','wish-page','finale-page'];
 const MINI=window.BirthdayMiniGames;
@@ -110,10 +110,10 @@ async function unlock(event){
 }
 function renderCollection(){
   const shelf=$('#card-shelf');shelf.replaceChildren();
-  for(const card of CONTENT.cards){const place=CARD_PLACES[card.id];const got=collection.includes(card.id);const button=document.createElement('button');button.type='button';button.className='shelf-card map-card'+(got?' collected':'');button.disabled=!got;button.dataset.cardId=card.id;button.style.left=place.x+'%';button.style.top=place.y+'%';button.style.setProperty('--card-color',place.color);button.title=place.name+' · '+card.title;const name=card.title||`第 ${card.id} 张`;button.setAttribute('aria-label',got?`查看${name}签卡，${place.name}`:`${place.name}的${name}签卡，尚未收集`);
+  for(const card of CONTENT.cards){const place=CARD_PLACES[card.id];const got=collection.includes(card.id);const button=document.createElement('button');button.type='button';button.className='shelf-card map-card'+(got?' collected':'');button.disabled=!got;button.dataset.cardId=card.id;button.style.left=place.x+'%';button.style.top=place.y+'%';button.style.setProperty('--card-color',place.color);button.title=place.name+(got?' · '+card.title:' · 未抽取的签卡');const name=card.title||`第 ${card.id} 张`;button.setAttribute('aria-label',got?`查看${name}签卡，${place.name}`:`${place.name}的生日签卡，尚未收集`);
     if(got){const illustration=document.createElement('span');illustration.className='mini-illustration';if(card.image){const img=document.createElement('img');img.src=card.image;img.alt=card.imageAlt||card.title||`第 ${card.id} 张签卡插图`;illustration.append(img);}button.append(illustration);button.addEventListener('click',()=>showCard(card.id,false));}
     else{const missing=document.createElement('span');missing.className='missing-card-mark';missing.textContent='?';missing.setAttribute('aria-hidden','true');button.append(missing);}
-    const label=document.createElement('span');label.className='shelf-card-label';label.textContent=card.title||card.id;button.append(label);const location=document.createElement('span');location.className='map-place-name';location.textContent=place.name;button.append(location);shelf.append(button);
+    if(got){const label=document.createElement('span');label.className='shelf-card-label';label.textContent=card.title||card.id;button.append(label);}const location=document.createElement('span');location.className='map-place-name';location.textContent=place.name;button.append(location);shelf.append(button);
   }
   const complete=collection.length===CONTENT.cards.length;
   $('#collection-count').textContent=`${collection.length} / ${CONTENT.cards.length}`;$('#shelf-status').textContent=`${collection.length} / ${CONTENT.cards.length} COLLECTED`;

@@ -2,10 +2,12 @@
 window.BirthdayMiniGames=(()=>{
   const $=s=>document.querySelector(s);
   const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
-  let options,normalControls,frame=0,last=0,elapsed=0,spawnClock=0,score=0,player=.5,items=[],serial=0;
+  let options,normalControls,frame=0,last=0,elapsed=0,spawnClock=0,score=0,player=.5,playerY=.84,items=[],serial=0;
   let giftState='ready',giftComplete=false,wishState='ready',wishComplete=false,blowFrame=0,blowStart=0;
   const keys=new Set();
-  function setPlayer(x){player=clamp(x,.07,.93);$('#gift-player').style.left=(player*100)+'%';}
+  const directions={ArrowLeft:'left',ArrowRight:'right',ArrowUp:'up',ArrowDown:'down'};
+  function geometry(){const arena=$('#gift-arena'),frog=$('#gift-player');return {width:arena.clientWidth||600,height:arena.clientHeight||250,frogWidth:frog.offsetWidth||40,frogHeight:frog.offsetHeight||48};}
+  function setPlayer(x,y=playerY){const g=geometry(),mx=Math.min(.45,(g.frogWidth/2+3)/g.width),my=Math.min(.45,(g.frogHeight/2+3)/g.height);player=clamp(x,mx,1-mx);playerY=clamp(y,my,1-my);$('#gift-player').style.left=(player*100)+'%';$('#gift-player').style.top=(playerY*100)+'%';}
   function clearDrops(){for(const item of items)item.node.remove();items=[];}
   function giftUI(){
     $('#gift-score').textContent=String(score);
@@ -19,7 +21,7 @@ window.BirthdayMiniGames=(()=>{
     $('#gift-controls').hidden=giftState==='done';
     updateDirections();
   }
-  function updateDirections(){const playing=options.isPage('gifts-page')&&['running','paused'].includes(giftState);for(const [direction,label] of [['left','向左'],['right','向右']])$(`[data-direction="${direction}"]`).setAttribute('aria-label',playing?`${label}，移动奶蛙`:`${label}，${direction==='left'?'上一页':'下一页'}`);$('.desk-footer p').innerHTML=playing?'<kbd>← →</kbd> 移动 <kbd>A</kbd> 暂停/继续 <kbd>B</kbd> 暂停/返回':normalControls;}
+  function updateDirections(){const playing=options.isPage('gifts-page')&&['running','paused'].includes(giftState);for(const [direction,label] of [['left','向左'],['right','向右'],['up','向上'],['down','向下']])$(`[data-direction="${direction}"]`).setAttribute('aria-label',playing?`${label}，移动奶蛙`:`${label}，${direction==='left'||direction==='up'?'上一页':'下一页'}`);$('.desk-footer p').innerHTML=playing?'<kbd>← ↑ ↓ →</kbd> 移动 <kbd>A</kbd> 暂停/继续 <kbd>B</kbd> 暂停/返回':normalControls;}
   function spawn(){
     const kinds=['gift-present','pixel-star','gift-cake'],kind=kinds[serial%3];
     const node=document.createElement('span');node.className='gift-drop';node.setAttribute('aria-hidden','true');
@@ -31,12 +33,14 @@ window.BirthdayMiniGames=(()=>{
   }
   function tick(now){
     if(giftState!=='running')return;
-    const dt=Math.min((now-last)/1000,.05);last=now;elapsed+=dt;spawnClock+=dt;
-    if(keys.has('left'))setPlayer(player-dt*.65);if(keys.has('right'))setPlayer(player+dt*.65);
+    const realDt=Math.max(0,(now-last)/1000),dt=Math.min(realDt,.15);last=now;elapsed+=realDt;spawnClock+=dt;
+    const g=geometry(),dx=Number(keys.has('right'))-Number(keys.has('left')),dy=Number(keys.has('down'))-Number(keys.has('up'));
+    const length=Math.hypot(dx,dy)||1,speed=Math.max(g.height*.7,g.width*.45);
+    if(dx||dy)setPlayer(player+dx/length*speed/g.width*dt,playerY+dy/length*speed/g.height*dt);
     if(spawnClock>.68){spawnClock=0;spawn();}
     for(let i=items.length-1;i>=0;i--){const item=items[i];item.y+=item.speed*dt;
       item.node.style.left=(item.x*100)+'%';item.node.style.top=(item.y*100)+'%';
-      if(item.y>=.77&&item.y<=.94&&Math.abs(item.x-player)<.1){
+      if(Math.abs(item.x-player)<(g.frogWidth*.5+11)/g.width&&Math.abs(item.y-playerY)<(g.frogHeight*.5+11)/g.height){
         score++;$('#gift-score').textContent=String(score);$('#gift-player').classList.remove('caught');void $('#gift-player').offsetWidth;$('#gift-player').classList.add('caught');item.node.remove();items.splice(i,1);
       }else if(item.y>1.1){item.node.remove();items.splice(i,1);}
     }
@@ -45,7 +49,7 @@ window.BirthdayMiniGames=(()=>{
   }
   function startGift(){
     if(giftState==='running')return;
-    if(giftState==='ready'){elapsed=0;score=0;serial=0;spawnClock=.6;setPlayer(.5);clearDrops();}
+    if(giftState==='ready'){elapsed=0;score=0;serial=0;spawnClock=.6;setPlayer(.5,.84);clearDrops();}
     giftState='running';keys.clear();giftUI();last=performance.now();frame=requestAnimationFrame(tick);$('#gift-arena').focus({preventScroll:true});
   }
   function pauseGift(){if(giftState!=='running')return;cancelAnimationFrame(frame);giftState='paused';keys.clear();giftUI();}
@@ -54,7 +58,7 @@ window.BirthdayMiniGames=(()=>{
     $('#gift-result-count').textContent=score>0?`接住了 ${score} 份小幸运，装进新一岁的背包。`:'好运已经装进背包，陪你走向新的一岁。';
     giftUI();$('#gift-to-letter').focus({preventScroll:true});
   }
-  function move(direction){if(options.isPage('gifts-page')&&giftState==='running')setPlayer(player+(direction==='left'?-.13:.13));}
+  function move(direction){if(!options.isPage('gifts-page')||giftState!=='running')return;const d={left:[-.12,0],right:[.12,0],up:[0,-.12],down:[0,.12]}[direction];if(d)setPlayer(player+d[0],playerY+d[1]);}
   function renderWish(){
     $('#cake-scene').classList.toggle('candles-out',wishState==='done');
     $('#blow-button').disabled=wishState==='blowing';$('#blow-button').hidden=wishState==='done';
@@ -73,29 +77,29 @@ window.BirthdayMiniGames=(()=>{
     };blowFrame=requestAnimationFrame(tickBlow);
   }
   function reset(){
-    cancelAnimationFrame(frame);cancelAnimationFrame(blowFrame);keys.clear();clearDrops();giftState='ready';giftComplete=false;elapsed=0;score=0;serial=0;$('#gift-result-count').textContent='';setPlayer(.5);giftUI();
+    cancelAnimationFrame(frame);cancelAnimationFrame(blowFrame);keys.clear();clearDrops();giftState='ready';giftComplete=false;elapsed=0;score=0;serial=0;$('#gift-result-count').textContent='';setPlayer(.5,.84);giftUI();
     wishState='ready';wishComplete=false;$('#wish-input').value='';$('#wish-echo').textContent='';$('#wish-echo').hidden=true;$('#blow-progress').value=0;document.querySelectorAll('.cake-candle').forEach(e=>e.classList.remove('out'));renderWish();
   }
   function init(config){
     options=config;normalControls=$('.desk-footer p').innerHTML;$('#gift-start').addEventListener('click',startGift);$('#gift-resume').addEventListener('click',startGift);$('#gift-pause').addEventListener('click',()=>giftState==='paused'?startGift():pauseGift());$('#blow-button').addEventListener('click',blow);
     const arena=$('#gift-arena');
-    const point=e=>{const r=arena.getBoundingClientRect();setPlayer((e.clientX-r.left)/r.width);};
+    const point=e=>{const r=arena.getBoundingClientRect();setPlayer((e.clientX-r.left)/r.width,(e.clientY-r.top)/r.height);};
     arena.addEventListener('pointerdown',e=>{if(giftState!=='running'||e.target.closest('button'))return;arena.setPointerCapture(e.pointerId);point(e);});
     arena.addEventListener('pointermove',e=>{if(giftState==='running'&&arena.hasPointerCapture(e.pointerId))point(e);});
-    for(const button of document.querySelectorAll('[data-gift-move], [data-direction="left"], [data-direction="right"]')){
+    for(const button of document.querySelectorAll('[data-gift-move], [data-direction]')){
       const direction=button.dataset.giftMove||button.dataset.direction;
       button.addEventListener('pointerdown',e=>{if(!options.isPage('gifts-page')||giftState!=='running')return;keys.add(direction);button.setPointerCapture(e.pointerId);});
       for(const type of ['pointerup','pointercancel','lostpointercapture'])button.addEventListener(type,()=>keys.delete(direction));
       if(button.dataset.giftMove)button.addEventListener('click',()=>move(direction));
     }
-    window.addEventListener('keyup',e=>{if(e.key==='ArrowLeft')keys.delete('left');if(e.key==='ArrowRight')keys.delete('right');});
+    window.addEventListener('keyup',e=>{if(directions[e.key])keys.delete(directions[e.key]);});
     window.addEventListener('blur',()=>{keys.clear();pauseGift();});
     document.addEventListener('visibilitychange',()=>{if(document.hidden){pauseGift();cancelBlow();}});
     reset();
   }
   function handleKey(event){
     if(options.isPage('gifts-page')){
-      if(['running','paused'].includes(giftState)&&['ArrowLeft','ArrowRight'].includes(event.key)){event.preventDefault();if(giftState==='running')keys.add(event.key==='ArrowLeft'?'left':'right');return true;}
+      if(['running','paused'].includes(giftState)&&directions[event.key]){event.preventDefault();if(giftState==='running'){keys.add(directions[event.key]);if(!event.repeat)move(directions[event.key]);}return true;}
       if(event.key==='Escape'&&giftState==='running'){event.preventDefault();pauseGift();return true;}
       if((event.key.toLowerCase()==='a'||event.code==='Space')&&!event.target.closest('button')){event.preventDefault();if(!event.repeat){if(giftState==='running')pauseGift();else if(giftState!=='done')startGift();else return false;}return true;}
     }
@@ -103,9 +107,9 @@ window.BirthdayMiniGames=(()=>{
     return false;
   }
   return {init,reset,handleKey,get giftComplete(){return giftComplete;},get wishComplete(){return wishComplete;},
-    enter(id){if(id==='gifts-page')giftUI();if(id==='wish-page')renderWish();updateDirections();},
+    enter(id){if(id==='gifts-page'){setPlayer(player,playerY);giftUI();}if(id==='wish-page')renderWish();updateDirections();},
     leave(id){if(id==='gifts-page')pauseGift();if(id==='wish-page')cancelBlow();},
-    direction(direction){if(options.isPage('gifts-page')&&['running','paused'].includes(giftState)){if(direction==='left'||direction==='right')move(direction);return true;}return false;},
+    direction(direction){if(options.isPage('gifts-page')&&['running','paused'].includes(giftState)){move(direction);return true;}return false;},
     confirm(){if(options.isPage('gifts-page')&&giftState!=='done'){if(giftState==='running')pauseGift();else startGift();return true;}if(options.isPage('wish-page')&&wishState!=='done'){blow();return true;}return false;},
     back(){if(options.isPage('gifts-page')&&giftState==='running'){pauseGift();return true;}if(options.isPage('wish-page')&&wishState==='blowing'){cancelBlow();return true;}return false;}
   };
