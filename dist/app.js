@@ -15,8 +15,20 @@ let overlayReturnFocus=null;
 let soundEnabled=false;
 let audioContext=null;
 let toastTimer=null;
+let finalePreparation=null;
 const reducedMotion=()=>window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+
+function prepareFinale(){
+  if(!finalePreparation){
+    finalePreparation=(async()=>{
+      const image=$('#finale-background');
+      if(image.complete&&!image.naturalWidth)image.src=image.getAttribute('src');
+      await Promise.all([image.decode(),document.fonts.load('16px PixelLatin')]);
+    })().catch(error=>{finalePreparation=null;throw error;});
+  }
+  return finalePreparation;
+}
 
 function readCollection(){try{const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');return Array.isArray(saved)?[...new Set(saved.filter(id=>CONTENT.cards.some(card=>card.id===id)))]:[];}catch{return[];}}
 function persist(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(collection));}catch{/* The game remains playable without browser storage. */}}
@@ -34,6 +46,13 @@ async function changePage(next){
   if(next>=2&&collection.length<CONTENT.cards.length){toast('再收集 '+(CONTENT.cards.length-collection.length)+' 张签卡，就能打开信件。');return;}
   if(next>=2&&!completionSeen){showCompletion();return;}
   dismissToast();closeCard(false);transitioning=true;const current=$('#'+pages[pageIndex]);const target=$('#'+pages[next]);
+  if(next===3){
+    const trigger=$('#to-finale'),label=$('#finale-launch-label');
+    trigger.disabled=true;trigger.setAttribute('aria-busy','true');label.textContent='星空准备中…';
+    try{await prepareFinale();}
+    catch{transitioning=false;toast('星空暂时没加载好，再点一次试试。');return;}
+    finally{trigger.disabled=false;trigger.removeAttribute('aria-busy');label.textContent='还有一句话';}
+  }
   current.classList.add('page-leaving');await delay(reducedMotion()?0:150);current.hidden=true;current.classList.remove('page-leaving');target.hidden=false;target.classList.add('page-entering');target.scrollTop=0;pageIndex=next;
   await delay(reducedMotion()?0:230);target.classList.remove('page-entering');transitioning=false;
   if(next===1)$('#draw-button').focus({preventScroll:true});else if(next===2)$('#back-to-cards').focus({preventScroll:true});else if(next===3)$('#back-to-letter').focus({preventScroll:true});else $('#character-answer').focus({preventScroll:true});
@@ -103,3 +122,4 @@ $('#completion-overlay').addEventListener('keydown',event=>{if(event.key==='Tab'
 document.addEventListener('keydown',event=>{if(event.isComposing)return;if(event.key==='Escape'){if(!$('#completion-overlay').hidden){event.preventDefault();closeCompletion();}else if(!$('#card-overlay').hidden){event.preventDefault();closeCard();}return;}if(event.target.matches('input,textarea'))return;const direction={ArrowLeft:'left',ArrowUp:'up',ArrowRight:'right',ArrowDown:'down'}[event.key];if(direction){event.preventDefault();navigateDirection(direction);}});
 window.addEventListener('storage',event=>{if(event.key===STORAGE_KEY&&!drawing){collection=readCollection();renderCollection();}});
 renderCollection();fillLetter();
+prepareFinale().catch(()=>{});
