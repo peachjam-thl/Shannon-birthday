@@ -77,19 +77,19 @@ function fillLetter(){const letter=CONTENT.letter;$('#letter-title').textContent
 function nextPage(){if(!$('#card-overlay').hidden){closeCard();return;}if(pageIndex===0){if(unlocked)changePage(1);else{toast('输入你最喜欢的角色，开始冒险。');$('#character-answer').focus();}}else if(pageIndex<pages.length-1)changePage(pageIndex+1);}
 function previousPage(){if(!$('#card-overlay').hidden){closeCard();return;}if(pageIndex>0)changePage(pageIndex-1);}
 function confirmAction(){if(!$('#card-overlay').hidden){closeCard();return;}if(pageIndex===0)$('#unlock-form').requestSubmit();else if(pageIndex===1)drawCard();else if(pageIndex===2)changePage(3);}
-function scrollScreen(direction){const scroller=pageIndex===2?$('#letter-page article'):$('#'+pages[pageIndex]);scroller.scrollBy({top:direction==='up'?-70:70,behavior:reducedMotion()?'instant':'smooth'});}
+function navigateDirection(direction){if(direction==='left'||direction==='up')previousPage();else if(direction==='right'||direction==='down')nextPage();}
 $('#unlock-form').addEventListener('submit',unlock);
 $('#character-answer').addEventListener('input',()=>{$('#character-answer').removeAttribute('aria-invalid');$('#answer-status').className='answer-status';$('#answer-status').textContent='只有你知道的答案，才能打开这份礼物。';});
 $('#draw-button').addEventListener('click',drawCard);$('#close-card').addEventListener('click',()=>closeCard());
 $('#draw-next').addEventListener('click',()=>{closeCard(false);if(collection.length===CONTENT.cards.length)changePage(2);else drawCard();});
 $('#to-letter').addEventListener('click',()=>changePage(2));$('#back-to-cards').addEventListener('click',()=>changePage(1));$('#back-to-unlock').addEventListener('click',()=>changePage(0));
 $('#to-finale').addEventListener('click',()=>changePage(3));$('#back-to-letter').addEventListener('click',()=>changePage(2));
-$('#shoulder-left').addEventListener('click',previousPage);$('#back-minus').addEventListener('click',previousPage);$('#shoulder-right').addEventListener('click',nextPage);$('#next-plus').addEventListener('click',nextPage);
+$('#back-minus').addEventListener('click',previousPage);$('#next-plus').addEventListener('click',nextPage);
 $('#home-button').addEventListener('click',()=>{closeCard(false);changePage(0);});$('#brand-home').addEventListener('click',event=>{event.preventDefault();closeCard(false);changePage(0);});
-document.querySelectorAll('[data-direction]').forEach(button=>button.addEventListener('click',()=>{const direction=button.dataset.direction;if(direction==='left')previousPage();else if(direction==='right')nextPage();else scrollScreen(direction);}));
+document.querySelectorAll('[data-direction]').forEach(button=>button.addEventListener('click',()=>navigateDirection(button.dataset.direction)));
 document.querySelectorAll('[data-game-action]').forEach(button=>button.addEventListener('click',()=>{const action=button.dataset.gameAction;if(action==='a')confirmAction();else if(action==='b')previousPage();else if(unlocked){closeCard(false);changePage(1);}else toast('先解锁生日冒险，再查看收藏。');}));
 $('#sound-toggle').addEventListener('click',()=>{soundEnabled=!soundEnabled;$('#sound-toggle').setAttribute('aria-pressed',String(soundEnabled));$('#sound-toggle').setAttribute('aria-label',soundEnabled?'关闭游戏音效':'开启游戏音效');if(soundEnabled)chime();});
 $('#card-overlay').addEventListener('keydown',event=>{if(event.key==='Tab'){const first=$('#close-card'),last=$('#draw-next');if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}}});
-document.addEventListener('keydown',event=>{if(event.isComposing)return;if(event.key==='Escape'){if(!$('#card-overlay').hidden){event.preventDefault();closeCard();}return;}if(event.target.matches('input,textarea'))return;if(event.key==='ArrowRight'){event.preventDefault();nextPage();}else if(event.key==='ArrowLeft'){event.preventDefault();previousPage();}});
+document.addEventListener('keydown',event=>{if(event.isComposing)return;if(event.key==='Escape'){if(!$('#card-overlay').hidden){event.preventDefault();closeCard();}return;}if(event.target.matches('input,textarea'))return;const direction={ArrowLeft:'left',ArrowUp:'up',ArrowRight:'right',ArrowDown:'down'}[event.key];if(direction){event.preventDefault();navigateDirection(direction);}});
 window.addEventListener('storage',event=>{if(event.key===STORAGE_KEY&&!drawing){collection=readCollection();renderCollection();}});
 renderCollection();fillLetter();
