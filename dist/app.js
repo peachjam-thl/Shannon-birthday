@@ -167,7 +167,7 @@ function fillLetter(){const letter=CONTENT.letter;$('#letter-title').textContent
 function nextPage(){if(!$('#completion-overlay').hidden){continueCompletion();return;}if(!$('#card-overlay').hidden){acceptCard();return;}if(pageIndex===0){if(unlocked)changePage(1);else{toast('输入你最喜欢的角色，开始冒险。');$('#character-answer').focus();}}else if(pageIndex<pages.length-1)changePage(pageIndex+1);}
 function previousPage(){if(window.BirthdayKeepsake.isOpen){window.BirthdayKeepsake.close();return;}if(!$('#completion-overlay').hidden){closeCompletion();return;}if(!$('#card-overlay').hidden){closeCard();return;}if(MINI.back())return;if(pageIndex>0)changePage(pageIndex-1);}
 function confirmAction(){if(transitioning||window.BirthdayKeepsake.isOpen)return;if(!$('#completion-overlay').hidden){continueCompletion();return;}if(!$('#card-overlay').hidden){acceptCard();return;}if(MINI.confirm())return;if(pageIndex===0)$('#unlock-form').requestSubmit();else if(pageIndex===1)drawCard();else if(pageIndex<pages.length-1)changePage(pageIndex+1);else window.BirthdayKeepsake.open();}
-function navigateDirection(direction){if(MINI.direction(direction))return;if(direction==='left'||direction==='up')previousPage();else if(direction==='right'||direction==='down')nextPage();}
+function navigateDirection(direction,event){if(MINI.direction(direction,event))return;if(direction==='left'||direction==='up')previousPage();else if(direction==='right'||direction==='down')nextPage();}
 $('#unlock-form').addEventListener('submit',unlock);
 $('#character-answer').addEventListener('input',()=>{$('#character-answer').removeAttribute('aria-invalid');$('#answer-status').className='answer-status';$('#answer-status').textContent='只有你知道的答案，才能打开这份礼物。';});
 $('#draw-button').addEventListener('click',drawCard);$('#close-card').addEventListener('click',acceptCard);$('#completion-continue').addEventListener('click',continueCompletion);
@@ -178,7 +178,7 @@ $('#to-wish').addEventListener('click',()=>changePage(4));$('#back-wish-letter')
 $('#to-finale').addEventListener('click',()=>changePage(5));$('#back-to-wish').addEventListener('click',()=>changePage(4));
 $('#back-minus').addEventListener('click',previousPage);$('#next-plus').addEventListener('click',nextPage);
 $('#home-button').addEventListener('click',()=>{closeCard(false);changePage(0);});$('#brand-home').addEventListener('click',event=>{event.preventDefault();closeCard(false);changePage(0);});
-document.querySelectorAll('[data-direction]').forEach(button=>button.addEventListener('click',()=>navigateDirection(button.dataset.direction)));
+document.querySelectorAll('[data-direction]').forEach(button=>button.addEventListener('click',event=>navigateDirection(button.dataset.direction,event)));
 document.querySelectorAll('[data-game-action]').forEach(button=>button.addEventListener('click',()=>{const action=button.dataset.gameAction;if(action==='a')confirmAction();else if(action==='b')previousPage();else if(unlocked){closeCompletion(false);closeCard(false);changePage(1);}else toast('先解锁生日冒险，再查看收藏。');}));
 $('#sound-toggle').addEventListener('click',toggleMusic);
 const birthdayMusic=$('#birthday-music');birthdayMusic.volume=.65;
