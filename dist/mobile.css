@@ -44,7 +44,7 @@
   #completion-title{font-size:clamp(16px,6.2cqw,20px)}.summon-panel .pixel-button{min-height:44px}
   .letter-page{gap:16px;grid-template-rows:auto minmax(0,1fr) auto}
   .letter-header #letter-heading{font-size:10px;line-height:1.7;letter-spacing:-.45px}
-  .letter-paper{padding:18px 14px}.letter-text{font-size:17px;line-height:1.9}
+  .letter-paper{padding:18px 14px}.letter-text{font-size:16px;line-height:1.8}
   .finale-page{padding:22px 11px 12px;gap:15px}.finale-title{font-size:9.1cqw}
   .finale-navigation{grid-template-columns:minmax(0,1fr) auto 20px}.finale-heart{justify-self:end}
   .mini-page{padding:16px 10px 12px;gap:12px}

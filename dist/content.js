@@ -1,5 +1,5 @@
 'use strict';
-// 五张签依次使用用户图 1–5 和用户提供的原文；最后的信件仍留空。
+// 五张签依次使用用户图 1–5；签卡与信件均使用用户提供的原文。
 // image 填本地相对路径，例如 assets/card-01.png；text 支持用 \n 换行。
 window.BIRTHDAY_CONTENT = {
   answer: '奶蛙',
@@ -10,5 +10,5 @@ window.BIRTHDAY_CONTENT = {
     {id: '04', image: 'assets/frog-card-04.png', imageAlt: '戴生日帽的绿色像素奶蛙', title: '生命', text: '希望姐姐一直健康平安，充满活力，好好享受生活中的每一天，身体健康最重要！'},
     {id: '05', image: 'assets/frog-card-05.png', imageAlt: '戴生日帽的橙色像素奶蛙', title: '热情', text: '希望姐姐永远开开心心，永远对未来充满热情！'}
   ],
-  letter: {title: '', text: '', signature: ''}
+  letter: {title: 'TO Shonnon Ma', text: '真的很高兴认识你！！我觉得姐是一个非常有趣的人，而且能够很轻松的感觉到姐的能量power，和姐一起玩很容易就被感染！认识姐可以入选今年我的年度新人啊哈哈哈哈哈哈哈哈哈。希望姐新的一岁依旧自在，工作顺心顺利，赚大钱！！！最重要的还是身体健康万事平安！生日快乐！！ all the best！', signature: 'peachjamT'}
 };
