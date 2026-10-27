@@ -26,8 +26,19 @@ let musicRequest=0;
 let toastTimer=null;
 let finalePreparation=null;
 const scenePreparation=new Map();
+const CARD_REVEAL_DELAY_MS=3000;
+const cardArtwork=new Map();
 const reducedMotion=()=>window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+
+function prepareCardArtwork(card){
+  if(!card.image)return null;
+  if(!cardArtwork.has(card.id)){
+    const image=new Image();image.decoding='async';image.src=card.image;cardArtwork.set(card.id,image);
+    image.decode().catch(()=>cardArtwork.delete(card.id));
+  }
+  return cardArtwork.get(card.id);
+}
 
 function prepareFinale(){
   if(!finalePreparation){
@@ -99,6 +110,7 @@ async function changePage(next){
   if(next===0){unlocked=false;$('#character-answer').value='';$('#answer-status').className='answer-status';$('#answer-status').textContent='只有你知道的答案，才能打开这份礼物。';}
   await delay(reducedMotion()?0:230);target.classList.remove('page-entering');transitioning=false;
   MINI.enter(pages[next]);
+  if(next===1)CONTENT.cards.forEach(prepareCardArtwork);
   const focusTarget=next===0?'#character-answer':next===1?'#draw-button':next===2?(MINI.giftComplete?'#gift-to-letter':'#gift-arena'):next===3?'#back-to-gifts':next===4?(MINI.wishComplete?'#to-finale':'#blow-button'):'#back-to-wish';
   $(focusTarget).focus({preventScroll:true});
 }
@@ -126,15 +138,17 @@ async function drawCard(){
   if(collection.length===CONTENT.cards.length){await changePage(2);return;}
   dismissToast();closeCard(false);drawing=true;$('#draw-button').disabled=true;$('#draw-button').setAttribute('aria-busy','true');$('#draw-overlay').hidden=false;$('#screen-pages').inert=true;$('#pixel-chest').classList.add('drawing');$('#draw-message').textContent='宝箱里，有一份小幸运正在醒来……';
   const remaining=CONTENT.cards.filter(card=>!collection.includes(card.id));const random=new Uint32Array(1);crypto.getRandomValues(random);const card=remaining[Math.floor(random[0]/4294967296*remaining.length)];
-  const picture=new Image();picture.src=card.image;
-  await Promise.all([delay(reducedMotion()?80:1050),picture.decode().catch(()=>{})]);
+  const revealTimer=delay(CARD_REVEAL_DELAY_MS);
+  prepareCardArtwork(card);
+  // Image loading and decoding must never extend the three-second chest animation.
+  await revealTimer;
   collection.push(card.id);drawing=false;$('#draw-overlay').hidden=true;$('#screen-pages').inert=false;$('#draw-button').removeAttribute('aria-busy');$('#pixel-chest').classList.remove('drawing');renderCollection();showCard(card.id,true);particles();
 }
 function showCard(id,isNew){
   if(!unlocked||pageIndex!==1||drawing||transitioning)return;
   const card=CONTENT.cards.find(item=>item.id===id);if(!card)return;activeCard=id;activeCardIsNew=isNew;overlayReturnFocus=document.activeElement;
   $('#reveal-heading').textContent=isNew?'NEW CARD · A LITTLE LUCK FOR YOU':'YOUR LITTLE LUCK COLLECTION';$('#reveal-number').textContent='CARD '+card.id;
-  const illustration=$('#reveal-illustration');illustration.replaceChildren();illustration.removeAttribute('aria-label');if(card.image){const image=document.createElement('img');image.src=card.image;image.alt=card.imageAlt||card.title||`第 ${card.id} 张签卡插图`;illustration.append(image);}else illustration.setAttribute('aria-label','空白插图区域');
+  const illustration=$('#reveal-illustration');illustration.replaceChildren();illustration.removeAttribute('aria-label');if(card.image){const image=prepareCardArtwork(card);image.alt=card.imageAlt||card.title||`第 ${card.id} 张签卡插图`;illustration.append(image);}else illustration.setAttribute('aria-label','空白插图区域');
   $('#reveal-title').textContent=card.title;$('#reveal-title').hidden=!card.title;$('#reveal-text').textContent=card.text;
   $('#reveal-card').classList.toggle('has-copy',Boolean(card.title||card.text));
   $('#reveal-card').setAttribute('aria-label',card.title||`第 ${card.id} 张生日签卡`);
