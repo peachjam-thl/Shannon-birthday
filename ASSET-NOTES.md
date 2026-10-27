@@ -1,5 +1,14 @@
 # 第二版像素素材
 
+## 生日纪念卡
+
+- 新背景通过内置 ImageGen 工具生成，未使用 CLI/API 回退。保存到 `dist/assets/pixel-keepsake-garden.png`，1536 × 1024 PNG。
+- 纪念卡复用第一页的 `shannon-pixel.png` 与 `birthday-duck.png`，源图未修改。蛋糕复用许愿页的原生 SVG，五根蜡烛保持点亮。掌机外壳、摇杆、十字键、按键和文字由 `build-keepsake.py` 生成原生 SVG；文字采用项目字体的轮廓。
+- 最终可编辑文件 `dist/assets/shannon-birthday-keepsake.svg` 自包含所有图像；使用已有 sharp 模块将 SVG 渲染为 `dist/assets/shannon-birthday-keepsake.png`，1440 × 2000 PNG。不是截取网页，下载不受视口尺寸影响。
+- 最终背景提示词（内置工具）：
+
+Use case: stylized-concept. Asset type: original background illustration for the screen of a downloadable birthday keepsake shaped like a vintage handheld game console. Generate a brand-new landscape 3:2 pixel art background, no text, no characters, no cake, no handheld console. Cozy farming RPG / Stardew-Valley-inspired original artwork. A tiny tranquil birthday garden on a magical early-evening lake shore: dusty lavender-blue sky with a few pixel stars, apricot sunset glow at the horizon, soft distant green mountains, small still pond, low hedges and wildflowers, warm lantern strings on the upper sides, little cream and salmon flowers at lower edges. Crisp deliberately square pixels, 16-bit game aesthetics, limited harmonious pastel palette, gentle warm lighting, no photorealism, no smooth painted outlines, no blur. Composition is very important: keep the middle 75 percent low-detail quiet open sky and soft flat garden/lake colors, because two birthday portraits and a small cake will be overlaid there later; cluster decorative trees, flowers and lanterns on the left and right outer edges and lower corners only. Charming and celebratory but tasteful, warm, balanced, intricate edges and spacious clear center. Fill full canvas edge to edge.
+
 ## 夕阳接礼物与生日许愿小屋
 
 - 使用内置 ImageGen 生成两张原创像素背景，并复制到项目：`dist/assets/pixel-gift-garden.png`、`dist/assets/pixel-wish-cottage.png`，均为 1672×941 PNG。两张背景与星空背景均在开始时预加载，切换前等待解码。
