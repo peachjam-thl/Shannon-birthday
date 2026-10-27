@@ -106,7 +106,7 @@ async function unlock(event){
   event.preventDefault();if(transitioning||drawing||pageIndex!==0||$('#unlock-button').disabled)return;
   const input=$('#character-answer');const status=$('#answer-status');
   if(input.value!==CONTENT.answer){status.textContent=input.value?'好像不对哦，再想一想？':'先写下那个角色的名字吧。';status.className='answer-status error';input.setAttribute('aria-invalid','true');$('#unlock-form').classList.remove('wrong-answer');void $('#unlock-form').offsetWidth;$('#unlock-form').classList.add('wrong-answer');input.focus();return;}
-  resetRound();input.removeAttribute('aria-invalid');status.textContent='回答正确！新一轮生日冒险正在开启……';status.className='answer-status success';unlocked=true;$('#unlock-button').disabled=true;await delay(reducedMotion()?0:450);await changePage(1);$('#unlock-button').disabled=false;
+  input.blur();resetRound();input.removeAttribute('aria-invalid');status.textContent='回答正确！新一轮生日冒险正在开启……';status.className='answer-status success';unlocked=true;$('#unlock-button').disabled=true;await delay(reducedMotion()?0:450);await changePage(1);$('#unlock-button').disabled=false;
 }
 function renderCollection(){
   const shelf=$('#card-shelf');shelf.replaceChildren();
