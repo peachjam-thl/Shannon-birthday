@@ -26,7 +26,7 @@ let musicRequest=0;
 let toastTimer=null;
 let finalePreparation=null;
 const scenePreparation=new Map();
-const CARD_REVEAL_DELAY_MS=3000;
+const CARD_REVEAL_DELAY_MS=1000;
 const cardArtwork=new Map();
 const reducedMotion=()=>window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
@@ -142,7 +142,7 @@ async function drawCard(){
   const remaining=CONTENT.cards.filter(card=>!collection.includes(card.id));const random=new Uint32Array(1);crypto.getRandomValues(random);const card=remaining[Math.floor(random[0]/4294967296*remaining.length)];
   const revealTimer=delay(CARD_REVEAL_DELAY_MS);
   prepareCardArtwork(card);
-  // Image loading and decoding must never extend the three-second chest animation.
+  // Image loading and decoding must never extend the one-second chest animation.
   await revealTimer;
   collection.push(card.id);drawing=false;$('#draw-overlay').hidden=true;$('#screen-pages').inert=false;$('#draw-button').removeAttribute('aria-busy');$('#pixel-chest').classList.remove('drawing');renderCollection();showCard(card.id,true);particles();
 }
